@@ -1,8 +1,148 @@
-<!doctype html><meta charset="utf-8">
-<title>Serene — Lunar Alliance</title>
-<h1>Serene · Lunar Alliance</h1>
-<p>2026 · 13-month calendar (28-day months, Year Day). Download below.</p>
-<ul>
-  <li><a href="downloads/core-2026-v1.pdf">Core calendar (v1)</a></li>
-  <li><a href="downloads/info-2026.pdf">Info page</a></li>
-</ul>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Serene · Lunar Alliance</title>
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --bg:#ffffff; --ink:#121212; --ink-soft:#3a3a3a;
+      --pink:#F6E5EF; --gold:#C9A227; --gold-ink:#7f6920;
+      --ring:#00000010; --radius:18px;
+      --shadow:0 8px 30px rgba(0,0,0,.08);
+      --grad: radial-gradient(1200px 800px at 70% -10%, #FDF7FA 0%, #fff 60%);
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0;background:var(--bg);color:var(--ink)}
+    body{
+      font-family:Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+      line-height:1.55; background:var(--grad), linear-gradient(180deg,#fff 0%,#fff 60%,#FDF1F7 100%);
+      min-height:100dvh;
+    }
+    .container{max-width:1000px;margin:0 auto;padding:28px 20px 80px}
+
+    /* Brand */
+    .brand{display:flex;align-items:center;gap:14px;margin-bottom:18px}
+    .logo{width:48px;height:48px;border-radius:12px;background:conic-gradient(from 210deg,#f9ddec,#ffe9b3,#fff,#f9ddec);box-shadow:inset 0 0 0 2px #00000014,0 8px 24px #0000001a}
+    .title{font-family:"Playfair Display",serif;font-weight:700;letter-spacing:.2px;font-size:28px}
+    .subtitle{color:var(--ink-soft);margin-top:4px}
+
+    /* Hero */
+    .hero{background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);border:1px solid var(--ring);padding:28px;display:grid;grid-template-columns:1.2fr 1fr;gap:28px}
+    @media (max-width:860px){.hero{grid-template-columns:1fr}}
+    .hero h1{font-family:"Playfair Display",serif;font-weight:600;font-size:34px;line-height:1.15;margin:0 0 8px}
+    .tag{display:inline-block;background:linear-gradient(90deg,var(--pink),#fff8e2);color:var(--gold-ink);border:1px solid #00000012;padding:6px 10px;border-radius:999px;font-size:12.5px;font-weight:600;letter-spacing:.2px}
+    .hero p{margin:14px 0 18px;color:var(--ink-soft)}
+    .cta{display:inline-flex;align-items:center;gap:10px;background:linear-gradient(180deg,#f5d86d,#e4c24a);color:#14120b;text-decoration:none;font-weight:700;padding:12px 18px;border-radius:12px;box-shadow:0 8px 18px #c9a22766;border:1px solid #b79a29;transition:transform .08s ease, box-shadow .2s ease}
+    .cta:hover{transform:translateY(-1px);box-shadow:0 12px 26px #c9a22766}
+    .cta small{opacity:.8;font-weight:600}
+    .specs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:14px;font-size:14px;color:#333}
+    @media (max-width:560px){.specs{grid-template-columns:1fr}}
+
+    /* Cards */
+    .grid{margin-top:26px;display:grid;gap:16px;grid-template-columns:repeat(3,minmax(0,1fr))}
+    @media (max-width:980px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+    @media (max-width:660px){.grid{grid-template-columns:1fr}}
+    .card{background:#fff;border-radius:var(--radius);border:1px solid var(--ring);box-shadow:var(--shadow);padding:18px 18px 16px}
+    .card h3{font-family:"Playfair Display",serif;font-size:20px;margin:0 0 6px}
+    .muted{color:var(--ink-soft);font-size:14px;margin:0 0 4px}
+    .list{margin:10px 0 0;padding-left:18px}
+    .list li{margin:6px 0}
+
+    /* Section heading */
+    .section{margin-top:40px;margin-bottom:6px;font-family:"Playfair Display",serif;font-weight:700;font-size:24px;position:relative}
+    .section:after{content:"";display:block;height:4px;width:72px;border-radius:999px;background:linear-gradient(90deg,var(--gold),#ffb7d6);margin-top:6px;opacity:.8}
+
+    /* Footer */
+    footer{margin-top:42px;padding-top:18px;border-top:1px dashed #00000022;font-size:13.5px;color:#444;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+    a{color:#0f3cab}
+    .pill{display:inline-block;padding:4px 10px;border-radius:999px;border:1px solid #00000018;background:#fff7fb;color:#8a1d5a;font-weight:600;font-size:12.5px}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Brand -->
+    <div class="brand">
+      <div class="logo" aria-hidden="true"></div>
+      <div>
+        <div class="title">Serene · Lunar Alliance</div>
+        <div class="subtitle">A clean 13-month lunar-aligned calendar for 2026 — elegant, printable, and practical.</div>
+      </div>
+    </div>
+
+    <!-- Hero -->
+    <section class="hero">
+      <div>
+        <span class="tag">2026 Core PDF · A4 landscape</span>
+        <h1>13-Month Calendar · 28-day months · Year Day</h1>
+        <p>Simple weekly flow, seasonal colors (winter blue · spring pink · summer gold · autumn plum), moon phases, eclipses, planetary ingresses, solstices &amp; equinoxes, and major meteor peaks.</p>
+        <!-- Update this href if you add a newer file -->
+        <a class="cta" href="downloads/core-2026-v1.pdf" download>
+          <span>⬇︎ Download Calendar</span> <small>(PDF)</small>
+        </a>
+        <div class="specs">
+          <div>• Start day: Thursday (every month)</div>
+          <div>• Print friendly: high contrast</div>
+          <div>• Includes: info &amp; reference pages</div>
+          <div>• Format: PDF · A4 Landscape</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>What’s inside</h3>
+        <p class="muted">Curated essentials so planning stays calm and cute:</p>
+        <ul class="list">
+          <li>Moon phases · <strong>○</strong> New · <strong>●</strong> Full</li>
+          <li>Sun → sign and planet → sign (Mercury → Pluto)</li>
+          <li>Eclipses, solstices &amp; equinoxes</li>
+          <li>Major meteor shower peak windows</li>
+          <li>Year Day page + tidy reference spread</li>
+        </ul>
+      </div>
+    </section>
+
+    <h2 class="section">Offerings</h2>
+    <div class="grid">
+      <article class="card">
+        <h3>Core Calendar · 2026</h3>
+        <p class="muted">$10 · instant PDF download</p>
+        <ul class="list">
+          <li>13 months (28 days each) + Year Day</li>
+          <li>Seasonal palette · clean typography</li>
+          <li>Moon phases, eclipses, ingresses, meteors</li>
+        </ul>
+      </article>
+
+      <article class="card">
+        <h3>Personalized Calendar</h3>
+        <p class="muted">$30 · includes your birth highlights</p>
+        <ul class="list">
+          <li>Birthday marked + mini chart summary</li>
+          <li>Planetary placements + sweet keywords</li>
+          <li>Delivered as a bespoke PDF</li>
+        </ul>
+      </article>
+
+      <article class="card">
+        <h3>Astrology Readings</h3>
+        <p class="muted">$33 · $77 · $144</p>
+        <ul class="list">
+          <li>Mini (15–20m) · one clear focus</li>
+          <li>Standard (45m) · birth chart reading</li>
+          <li>Deep Dive (90m) · with follow-ups</li>
+        </ul>
+      </article>
+    </div>
+
+    <footer>
+      <div>© 2026 Serene. All rights reserved.</div>
+      <div><span class="pill">Contact</span> · email: <a href="mailto:hello@example.com">hello@example.com</a></div>
+    </footer>
+  </div>
+</body>
+</html>
+
