@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Calendar · Checkout</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{--ink:#111;--soft:#3a3a3a;--ring:#0001;--radius:18px;--shadow:0 8px 30px rgba(0,0,0,.08)}
+  body{margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:#fff}
+  .wrap{max-width:920px;margin:0 auto;padding:26px 18px 80px}
+  a{color:#0f3cab;text-decoration:none}
+  .crumb{margin-bottom:10px}
+  .hero{display:grid;gap:22px;grid-template-columns:1.1fr 1fr}
+  @media (max-width:880px){.hero{grid-template-columns:1fr}}
+  .card{background:#fff;border:1px solid var(--ring);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px}
+  h1{font:600 30px "Playfair Display",serif;margin:6px 0 10px}
+  .preview{height:260px;border-radius:14px;background:#f6f6f6;border:1px solid var(--ring);position:relative;overflow:hidden}
+  .badge{position:absolute;right:12px;top:12px;background:#111;color:#fff;padding:6px 10px;border-radius:999px;font-weight:700;font-size:12px}
+  .note{font-size:14px;color:#444;margin:8px 0 0}
+  .ok{display:none;margin-top:14px;padding:10px;border-radius:10px;background:#f5fff2;border:1px solid #8fd08f;color:#145a14}
+  .download{display:none;margin-top:10px}
+  .btn{display:inline-block;margin-top:8px;padding:10px 14px;border-radius:12px;text-decoration:none;
+       font-weight:700;border:1px solid #b79a29;color:#14120b;background:linear-gradient(180deg,#f5d86d,#e4c24a);box-shadow:0 8px 18px #c9a22766}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="crumb"><a href="index.html">← Back</a></div>
+  <div class="hero">
+    <div class="card">
+      <div class="preview" id="preview">
+        <div class="badge" id="price">$10</div>
+      </div>
+      <h1 id="name">Calendar</h1>
+      <p id="desc" style="color:#3a3a3a">28-day months · Year Day · moons · eclipses · ingresses · solstices/equinoxes · meteor peaks.</p>
+    </div>
+
+    <div class="card">
+      <h2 style="margin:0 0 8px;font-size:18px">Checkout</h2>
+      <div id="paypal-button-container"></div>
+      <div class="ok" id="okBox">Payment complete ✨ Your download is unlocked below.</div>
+      <p class="download"><a class="btn" id="dl" href="#" download>⬇︎ Download PDF</a></p>
+      <p class="note">Secure payments via PayPal. After approval, your link appears here instantly.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+  // --- Product catalog (static) ---
+  const PRODUCTS = {
+    core:   { name:"Core Calendar · 2026",   file:"downloads/core-2026-v1.pdf",
+              desc:"Plain & clean seasonal palette. Same content across styles.", preview:["#e6f0ff","#ffe6f3","#ffefb8","#5b3e5b"] },
+    deluxe: { name:"Deluxe Calendar · 2026", file:"downloads/deluxe-2026-v1.pdf",
+              desc:"White · Gold · Black aesthetic with luxe accents.", preview:["#ffffff","#c9a227","#111111","#f7d9e9"] },
+    color:  { name:"Color-Pop Calendar · 2026", file:"downloads/color-2026-v1.pdf",
+              desc:"Vivid neon monthly tints. High-energy look.", preview:["#ff2bd1","#21e6ff","#f9ff21","#7cff5b"] }
+  };
+
+  // parse variant
+  const params = new URLSearchParams(location.search);
+  const v = params.get("v") || "core";
+  const sku = PRODUCTS[v] ? v : "core";
+  const P = PRODUCTS[sku];
+
+  // fill UI
+  document.getElementById("name").textContent = P.name;
+  document.getElementById("desc").textContent = P.desc;
+  document.getElementById("dl").href = P.file;
+
+  // simple color preview
+  const pv = document.getElementById("preview");
+  P.preview.forEach((c,i)=>{
+    const b = document.createElement("div");
+    b.style.position="absolute"; b.style.left=(i*25)+"%"; b.style.top=0; b.style.width="25%"; b.style.height="100%"; b.style.background=c;
+    pv.appendChild(b);
+  });
+
+  // --- PayPal Smart Buttons ---
+  // 1) Create a PayPal BUSINESS account at https://developer.paypal.com/
+  // 2) Get a "Live" Client ID and paste it below:
+  const PAYPAL_CLIENT_ID = "ATrTbEnnepa_6hkq2i31csoTPpIBN53nKRE63qo3KDEjQKM_Mw7PzxWHYh0S-b2VaLRT1T1enk4lWFkj";
+
+  const script = document.createElement("script");
+  script.src = `https://www.paypal.com/sdk/js?client-id=${PAYPAL_CLIENT_ID}&currency=USD`;
+  script.onload = () => {
+    paypal.Buttons({
+      style: { shape:"pill", color:"gold", layout:"vertical", label:"paypal" },
+      createOrder: (data, actions) => actions.order.create({
+        purchase_units: [{ amount: { value: "10.00" }, description: P.name }]
+      }),
+      onApprove: async (data, actions) => {
+        try{
+          await actions.order.capture();
+          document.getElementById("okBox").style.display="block";
+          document.querySelector(".download").style.display="block";
+          // Optionally, append the order id to the filename for analytics
+          // const id = data.orderID;
+        }catch(e){ alert("Payment captured but UI failed. Refresh the page."); }
+      },
+      onError: err => alert("PayPal error: " + err)
+    }).render('#paypal-button-container');
+  };
+  document.body.appendChild(script);
+</script>
+</body>
+</html>

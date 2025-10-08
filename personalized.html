@@ -1,0 +1,123 @@
+<!doctype html>
+
+<html lang="en">
+
+<head>
+
+<meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+<title>Personalized Calendar · Checkout</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+<style>
+
+  :root{--ring:#0001;--radius:18px;--shadow:0 8px 30px rgba(0,0,0,.08)}
+
+  body{margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif}
+
+  .wrap{max-width:820px;margin:0 auto;padding:28px 18px 80px}
+
+  .card{background:#fff;border:1px solid var(--ring);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px}
+
+  .btn{display:inline-block;margin-top:10px;padding:10px 14px;border-radius:12px;text-decoration:none;font-weight:700;border:1px solid #b79a29;color:#14120b;background:linear-gradient(180deg,#f5d86d,#e4c24a)}
+
+  .ok{display:none;margin-top:12px;padding:10px;border-radius:10px;background:#f5fff2;border:1px solid #8fd08f;color:#145a14}
+
+  .note{color:#444}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="wrap">
+
+  <p><a href="index.html">← Back</a></p>
+
+  <div class="card">
+
+    <h1 style="font-family:'Playfair Display',serif;margin:0 0 10px">Personalized Calendar · $30</h1>
+
+    <p class="note">Includes: birthday marked + mini chart keywords page. After payment, send your birth details with the order ID.</p>
+
+
+
+
+    <div id="paypal-button-container"></div>
+
+    <div class="ok" id="okBox">
+
+      Payment complete ✨ Now click:
+
+      <p><a id="mailto" class="btn" href="#">Send birth details</a></p>
+
+      <p class="note">We’ll deliver your personalized PDF to your email within 3–5 days.</p>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+
+
+<script>
+
+  const PAYPAL_CLIENT_ID = "ATrTbEnnepa_6hkq2i31csoTPpIBN53nKRE63qo3KDEjQKM_Mw7PzxWHYh0S-b2VaLRT1T1enk4lWFkj";
+
+  const script = document.createElement("script");
+
+  script.src = `https://www.paypal.com/sdk/js?client-id=${PAYPAL_CLIENT_ID}&currency=USD`;
+
+  script.onload = () => {
+
+    paypal.Buttons({
+
+      style:{shape:"pill",color:"gold",layout:"vertical",label:"paypal"},
+
+      createOrder:(data,actions)=>actions.order.create({
+
+        purchase_units:[{amount:{value:"30.00"},description:"Personalized Calendar · 2026"}]
+
+      }),
+
+      onApprove: async (data,actions)=>{
+
+        const details = await actions.order.capture();
+
+        const id = details.id || data.orderID || "";
+
+        document.getElementById("okBox").style.display="block";
+
+        // Prefill an email (replace with your real address)
+
+        const to = "hello@example.com";
+
+        const subject = encodeURIComponent("Personalized Calendar Order " + id);
+
+        const body = encodeURIComponent(
+
+          `Order ID: ${id}\n\nYour name:\nEmail to deliver PDF:\nBirthday (YYYY-MM-DD):\nBirth time (if known):\nBirth city/country:\nNotes or focus:\n`
+
+        );
+
+        document.getElementById("mailto").href = `mailto:${to}?subject=${subject}&body=${body}`;
+
+      },
+
+      onError: err => alert("PayPal error: " + err)
+
+    }).render("#paypal-button-container");
+
+  };
+
+  document.body.appendChild(script);
+
+</script>
+
+</body>
+
+</html>
