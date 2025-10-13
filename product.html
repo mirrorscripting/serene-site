@@ -6,7 +6,7 @@
 <title>Calendar · Checkout</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
-  :root{--ink:#111;--soft:#3a3a3a;--ring:#0001;--radius:18px;--shadow:0 8px 30px rgba(0,0,0,.08)}
+  :root{--ink:#111;--soft:#3a3a3a;--ring:#0001;--radius:16px;--shadow:0 8px 24px rgba(0,0,0,.08)}
   body{margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:#fff}
   .wrap{max-width:920px;margin:0 auto;padding:26px 18px 80px}
   a{color:#0f3cab;text-decoration:none}
@@ -20,8 +20,7 @@
   .note{font-size:14px;color:#444;margin:8px 0 0}
   .ok{display:none;margin-top:14px;padding:10px;border-radius:10px;background:#f5fff2;border:1px solid #8fd08f;color:#145a14}
   .download{display:none;margin-top:10px}
-  .btn{display:inline-block;margin-top:8px;padding:10px 14px;border-radius:12px;text-decoration:none;
-       font-weight:700;border:1px solid #b79a29;color:#14120b;background:linear-gradient(180deg,#f5d86d,#e4c24a);box-shadow:0 8px 18px #c9a22766}
+  .btn{display:inline-block;margin-top:8px;padding:10px 14px;border-radius:12px;text-decoration:none;font-weight:700;border:1px solid #b79a29;color:#14120b;background:linear-gradient(180deg,#f5d86d,#e4c24a);box-shadow:0 8px 18px #c9a22766}
 </style>
 </head>
 <body>
@@ -29,13 +28,10 @@
   <div class="crumb"><a href="index.html">← Back</a></div>
   <div class="hero">
     <div class="card">
-      <div class="preview" id="preview">
-        <div class="badge" id="price">$10</div>
-      </div>
+      <div class="preview" id="preview"><div class="badge" id="price">$10</div></div>
       <h1 id="name">Calendar</h1>
-      <p id="desc" style="color:#3a3a3a">28-day months · Year Day · moons · eclipses · ingresses · solstices/equinoxes · meteor peaks.</p>
+      <p id="desc" style="color:#3a3a3a">28-day months or regular 12-month · moons · eclipses · ingresses · solstices/equinoxes · meteor peaks.</p>
     </div>
-
     <div class="card">
       <h2 style="margin:0 0 8px;font-size:18px">Checkout</h2>
       <div id="paypal-button-container"></div>
@@ -47,28 +43,44 @@
 </div>
 
 <script>
-  // --- Product catalog (static) ---
-  const PRODUCTS = {
-    core:   { name:"Core Calendar · 2026",   file:"downloads/core-2026-v1.pdf",
-              desc:"Plain & clean seasonal palette. Same content across styles.", preview:["#e6f0ff","#ffe6f3","#ffefb8","#5b3e5b"] },
-    deluxe: { name:"Deluxe Calendar · 2026", file:"downloads/deluxe-2026-v1.pdf",
-              desc:"White · Gold · Black aesthetic with luxe accents.", preview:["#ffffff","#c9a227","#111111","#f7d9e9"] },
-    color:  { name:"Color-Pop Calendar · 2026", file:"downloads/color-2026-v1.pdf",
-              desc:"Vivid neon monthly tints. High-energy look.", preview:["#ff2bd1","#21e6ff","#f9ff21","#7cff5b"] }
+  // ===== Catalog by calendar type (12/13) + style =====
+  const CATALOG = {
+    "13": {
+      core:   { name:"Core Calendar · 2026 (13-month)",   file:"downloads/13/core-2026-v1.pdf",
+                desc:"Plain & clean seasonal palette. 13×28 days + Year Day.",
+                preview:["#e6f0ff","#ffe6f3","#ffefb8","#5b3e5b"] },
+      deluxe: { name:"Deluxe Calendar · 2026 (13-month)", file:"downloads/13/deluxe-2026-v1.pdf",
+                desc:"White · Gold · Black aesthetic. 13×28 days + Year Day.",
+                preview:["#ffffff","#c9a227","#111111","#f7d9e9"] },
+      color:  { name:"Color-Pop · 2026 (13-month)",       file:"downloads/13/color-2026-v1.pdf",
+                desc:"Vivid neon monthly tints. 13×28 days + Year Day.",
+                preview:["#ff2bd1","#21e6ff","#f9ff21","#7cff5b"] }
+    },
+    "12": {
+      core:   { name:"Core Calendar · 2026 (12-month)",   file:"downloads/12/core-2026-v1.pdf",
+                desc:"Plain & clean seasonal palette. Regular 12-month layout.",
+                preview:["#e6f0ff","#ffe6f3","#ffefb8","#5b3e5b"] },
+      deluxe: { name:"Deluxe Calendar · 2026 (12-month)", file:"downloads/12/deluxe-2026-v1.pdf",
+                desc:"White · Gold · Black aesthetic. Regular 12-month layout.",
+                preview:["#ffffff","#c9a227","#111111","#f7d9e9"] },
+      color:  { name:"Color-Pop · 2026 (12-month)",       file:"downloads/12/color-2026-v1.pdf",
+                desc:"Vivid neon monthly tints. Regular 12-month layout.",
+                preview:["#ff2bd1","#21e6ff","#f9ff21","#7cff5b"] }
+    }
   };
 
-  // parse variant
+  // Parse URL params
   const params = new URLSearchParams(location.search);
-  const v = params.get("v") || "core";
-  const sku = PRODUCTS[v] ? v : "core";
-  const P = PRODUCTS[sku];
+  const cal = (params.get("cal") || "13").match(/^12|13$/) ? params.get("cal") : "13";
+  const v = (params.get("v") || "core");
+  const P = (CATALOG[cal] && CATALOG[cal][v]) ? CATALOG[cal][v] : CATALOG["13"]["core"];
 
-  // fill UI
+  // Fill UI
   document.getElementById("name").textContent = P.name;
   document.getElementById("desc").textContent = P.desc;
   document.getElementById("dl").href = P.file;
 
-  // simple color preview
+  // Preview colors
   const pv = document.getElementById("preview");
   P.preview.forEach((c,i)=>{
     const b = document.createElement("div");
@@ -76,11 +88,8 @@
     pv.appendChild(b);
   });
 
-  // --- PayPal Smart Buttons ---
-  // 1) Create a PayPal BUSINESS account at https://developer.paypal.com/
-  // 2) Get a "Live" Client ID and paste it below:
+  // ===== PayPal Smart Buttons =====
   const PAYPAL_CLIENT_ID = "ATrTbEnnepa_6hkq2i31csoTPpIBN53nKRE63qo3KDEjQKM_Mw7PzxWHYh0S-b2VaLRT1T1enk4lWFkj";
-
   const script = document.createElement("script");
   script.src = `https://www.paypal.com/sdk/js?client-id=${PAYPAL_CLIENT_ID}&currency=USD`;
   script.onload = () => {
@@ -90,13 +99,9 @@
         purchase_units: [{ amount: { value: "10.00" }, description: P.name }]
       }),
       onApprove: async (data, actions) => {
-        try{
-          await actions.order.capture();
-          document.getElementById("okBox").style.display="block";
-          document.querySelector(".download").style.display="block";
-          // Optionally, append the order id to the filename for analytics
-          // const id = data.orderID;
-        }catch(e){ alert("Payment captured but UI failed. Refresh the page."); }
+        await actions.order.capture();
+        document.getElementById("okBox").style.display = "block";
+        document.querySelector(".download").style.display = "block";
       },
       onError: err => alert("PayPal error: " + err)
     }).render('#paypal-button-container');

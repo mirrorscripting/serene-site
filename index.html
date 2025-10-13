@@ -1,4 +1,4 @@
-k<!doctype html>
+<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8" />
@@ -6,48 +6,32 @@ k<!doctype html>
 <title>Serene · Lunar Alliance</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
-  :root{
-    --ink:#111; --soft:#3a3a3a; --ring:#0002; --gold:#C9A227; --pink:#F6E5EF;
-    --radius:16px; --shadow:0 8px 24px rgba(0,0,0,.08);
-  }
-  *{box-sizing:border-box}
-  html,body{margin:0}
-  body{
-    font-family:Inter,system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif; color:var(--ink);
-    background: radial-gradient(900px 600px at 70% -10%, #FDF7FA 0%, #fff 60%), #fff;
-  }
+  :root{--ink:#111;--soft:#3a3a3a;--ring:#0002;--gold:#C9A227;--pink:#F6E5EF;--radius:16px;--shadow:0 8px 24px rgba(0,0,0,.08)}
+  *{box-sizing:border-box} html,body{margin:0}
+  body{font-family:Inter,system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;color:var(--ink);
+       background: radial-gradient(900px 600px at 70% -10%, #FDF7FA 0%, #fff 60%), #fff;}
   .wrap{max-width:1040px;margin:0 auto;padding:22px 18px 64px}
-  /* Header (denser) */
   .top{display:flex;align-items:center;gap:12px;margin-bottom:10px}
-  .logo{width:40px;height:40px;border-radius:12px; background:conic-gradient(from 210deg,#f9ddec,#ffe9b3,#fff,#f9ddec); box-shadow:inset 0 0 0 2px #0001}
-  .brand{font:700 26px "Playfair Display",serif; letter-spacing:.2px}
-  .sub{color:var(--soft); font-size:14px; margin-left:52px; margin-top:2px}
-  /* Hero strip */
-  .hero{
-    display:flex; align-items:center; justify-content:space-between; gap:14px;
-    background:#fff; border:1px solid var(--ring); border-radius:var(--radius); box-shadow:var(--shadow);
-    padding:14px 16px; margin-top:12px;
-  }
-  .hero h1{margin:0; font:700 22px "Playfair Display",serif}
-  .tag{display:inline-block; padding:6px 10px; border-radius:999px; background:linear-gradient(90deg,var(--pink),#fff8e2); border:1px solid #00000012; color:#6e5a19; font-weight:700; font-size:12px}
-  .cta{display:inline-block; padding:10px 14px; border-radius:12px; text-decoration:none; font-weight:700;
-       border:1px solid #b79a29; color:#14120b; background:linear-gradient(180deg,#f5d86d,#e4c24a); box-shadow:0 8px 18px #c9a22766}
-  /* Sections */
-  .section{display:flex; align-items:center; justify-content:space-between; margin:18px 0 10px}
-  .section h2{margin:0; font:700 22px "Playfair Display",serif}
-  /* Cards grid (compact) */
-  .grid{display:grid; gap:12px; grid-template-columns:repeat(3,minmax(0,1fr))}
+  .logo{width:40px;height:40px;border-radius:12px;background:conic-gradient(from 210deg,#f9ddec,#ffe9b3,#fff,#f9ddec);box-shadow:inset 0 0 0 2px #0001}
+  .brand{font:700 26px "Playfair Display",serif;letter-spacing:.2px}
+  .sub{color:var(--soft);font-size:14px;margin-left:52px;margin-top:2px}
+  .hero{display:flex;align-items:center;justify-content:space-between;gap:14px;background:#fff;border:1px solid var(--ring);border-radius:var(--radius);box-shadow:var(--shadow);padding:14px 16px;margin-top:12px}
+  .hero h1{margin:0;font:700 22px "Playfair Display",serif}
+  .tag{display:inline-block;padding:6px 10px;border-radius:999px;background:linear-gradient(90deg,var(--pink),#fff8e2);border:1px solid #0001;color:#6e5a19;font-weight:700;font-size:12px}
+  .cta{display:inline-block;padding:10px 14px;border-radius:12px;text-decoration:none;font-weight:700;border:1px solid #b79a29;color:#14120b;background:linear-gradient(180deg,#f5d86d,#e4c24a);box-shadow:0 8px 18px #c9a22766}
+  .section{display:flex;align-items:center;justify-content:space-between;margin:18px 0 10px}
+  .section h2{margin:0;font:700 22px "Playfair Display",serif}
+  .grid{display:grid;gap:12px;grid-template-columns:repeat(3,minmax(0,1fr))}
   @media (max-width:980px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
   @media (max-width:640px){.grid{grid-template-columns:1fr}}
-  .card{background:#fff; border:1px solid var(--ring); border-radius:var(--radius); box-shadow:var(--shadow); padding:14px}
-  .card h3{margin:0 0 4px; font:700 18px "Playfair Display",serif}
-  .muted{margin:2px 0 6px; color:var(--soft); font-size:13.5px}
-  .swatch{height:8px; border-radius:6px; overflow:hidden; display:flex; margin:6px 0 8px}
+  .card{background:#fff;border:1px solid var(--ring);border-radius:var(--radius);box-shadow:var(--shadow);padding:14px}
+  .card h3{margin:0 0 4px;font:700 18px "Playfair Display",serif}
+  .muted{margin:2px 0 6px;color:var(--soft);font-size:13.5px}
+  .swatch{height:8px;border-radius:6px;overflow:hidden;display:flex;margin:6px 0 8px}
   .swatch span{flex:1}
-  .btn{display:inline-block; padding:8px 12px; border-radius:10px; text-decoration:none; font-weight:700; font-size:14px;
-       border:1px solid #b79a29; color:#14120b; background:linear-gradient(180deg,#f5d86d,#e4c24a)}
-  .btn.ghost{background:#fff; border:1px solid #0002}
-  footer{margin-top:30px; padding-top:14px; border-top:1px dashed #00000033; font-size:13.5px; color:#444; display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap}
+  .btn{display:inline-block;padding:8px 12px;border-radius:10px;text-decoration:none;font-weight:700;font-size:14px;border:1px solid #b79a29;color:#14120b;background:linear-gradient(180deg,#f5d86d,#e4c24a)}
+  .btn.ghost{background:#fff;border:1px solid #0002}
+  footer{margin-top:30px;padding-top:14px;border-top:1px dashed #0003;font-size:13.5px;color:#444;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
 </style>
 </head>
 <body>
@@ -56,49 +40,68 @@ k<!doctype html>
       <div class="logo" aria-hidden="true"></div>
       <div class="brand">Serene · Lunar Alliance</div>
     </div>
-    <div class="sub">2026 · 13-month calendar (28 days each + Year Day) · moons · eclipses · ingresses · solstices/equinoxes · meteor peaks</div>
+    <div class="sub">2026 · lunar-aligned calendars · moons · eclipses · ingresses · solstices/equinoxes · meteor peaks</div>
 
     <div class="hero">
       <div>
         <h1>Choose your calendar style</h1>
         <span class="tag">A4 landscape · print-friendly</span>
       </div>
-      <a class="cta" href="product.html?v=core">View Core ($10)</a>
+      <a class="cta" href="product.html?cal=13&v=core">View Core (13-month)</a>
     </div>
 
-    <div class="section">
-      <h2>Calendars · $10 each</h2>
-    </div>
+    <!-- 13-month row -->
+    <div class="section"><h2>13-Month Calendars · $10 each</h2></div>
     <div class="grid">
       <div class="card">
         <h3>Core (Plain & Clean)</h3>
         <p class="muted">Seasonal palette · clean typography.</p>
         <div class="swatch"><span style="background:#e6f0ff"></span><span style="background:#ffe6f3"></span><span style="background:#ffefb8"></span><span style="background:#5b3e5b"></span></div>
-        <a class="btn" href="product.html?v=core">View & Buy</a>
+        <a class="btn" href="product.html?cal=13&v=core">View & Buy</a>
       </div>
       <div class="card">
         <h3>Deluxe (White · Gold · Black)</h3>
         <p class="muted">Luxe contrast with gold accents.</p>
         <div class="swatch"><span style="background:#ffffff"></span><span style="background:#c9a227"></span><span style="background:#111111"></span><span style="background:#f7d9e9"></span></div>
-        <a class="btn" href="product.html?v=deluxe">View & Buy</a>
+        <a class="btn" href="product.html?cal=13&v=deluxe">View & Buy</a>
       </div>
       <div class="card">
         <h3>Color-Pop (Neon)</h3>
         <p class="muted">High-energy vivid palette.</p>
         <div class="swatch"><span style="background:#ff2bd1"></span><span style="background:#21e6ff"></span><span style="background:#f9ff21"></span><span style="background:#7cff5b"></span></div>
-        <a class="btn" href="product.html?v=color">View & Buy</a>
+        <a class="btn" href="product.html?cal=13&v=color">View & Buy</a>
       </div>
     </div>
 
-    <div class="section">
-      <h2>Personalized Calendar · $50</h2>
+    <!-- 12-month row -->
+    <div class="section"><h2>12-Month Calendars · $10 each</h2></div>
+    <div class="grid">
+      <div class="card">
+        <h3>Core (Plain & Clean)</h3>
+        <p class="muted">Regular 12-month layout · same data.</p>
+        <div class="swatch"><span style="background:#e6f0ff"></span><span style="background:#ffe6f3"></span><span style="background:#ffefb8"></span><span style="background:#5b3e5b"></span></div>
+        <a class="btn" href="product.html?cal=12&v=core">View & Buy</a>
+      </div>
+      <div class="card">
+        <h3>Deluxe (White · Gold · Black)</h3>
+        <p class="muted">Luxe contrast · 12-month.</p>
+        <div class="swatch"><span style="background:#ffffff"></span><span style="background:#c9a227"></span><span style="background:#111111"></span><span style="background:#f7d9e9"></span></div>
+        <a class="btn" href="product.html?cal=12&v=deluxe">View & Buy</a>
+      </div>
+      <div class="card">
+        <h3>Color-Pop (Neon)</h3>
+        <p class="muted">Vivid palette · 12-month.</p>
+        <div class="swatch"><span style="background:#ff2bd1"></span><span style="background:#21e6ff"></span><span style="background:#f9ff21"></span><span style="background:#7cff5b"></span></div>
+        <a class="btn" href="product.html?cal=12&v=color">View & Buy</a>
+      </div>
     </div>
+
+    <div class="section"><h2>Personalized Calendar · $50</h2></div>
     <div class="grid">
       <div class="card">
         <h3>Birthday + Mini Chart Summary</h3>
-        <p class="muted">Choose style (Core / Deluxe / Color-Pop). We mark your birthday + add a sweet placement page.</p>
+        <p class="muted">Choose 12- or 13-month and your style (Core / Deluxe / Color-Pop). We mark your birthday and add a sweet placement page.</p>
         <a class="btn" href="personalized.html">Customize & Buy</a>
-        <a class="btn ghost" href="product.html?v=core" style="margin-left:6px">See Core Preview</a>
       </div>
     </div>
 
@@ -109,4 +112,3 @@ k<!doctype html>
   </div>
 </body>
 </html>
-
