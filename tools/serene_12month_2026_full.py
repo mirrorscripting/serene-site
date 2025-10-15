@@ -1,7 +1,13 @@
+~/calenv/bin/python3 ~/serene-site/tools/serene_12month_2026_full.py
+xdg-open ~/serene-site/downloads/12/core-2026-v1.pdf
+
+cd ~/serene-site
+git add downloads/12/core-2026-v1.pdf tools/serene_12month_2026_full.py
+git commit -m "12-month calendar: remove all out-of-month boxes"
+git push
+
 # 2026 — 12-Month Calendar (FULL · matches 13-month style)
-# Changes in this version:
-# • Removed the tiny date label at the top of each cell.
-# • Only show numbers + events for days that belong to the month; outer cells are blank.
+# Update: draws ONLY real days; no boxes for out-of-month cells.
 
 import os, math, random, calendar, datetime as dt
 from zoneinfo import ZoneInfo
@@ -34,7 +40,7 @@ if not _reg(FONT_REG, ["/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf","/usr/s
 if not _reg(FONT_BOLD, ["/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf","/usr/share/fonts/TTF/DejaVuSans-Bold.ttf","/usr/local/share/fonts/DejaVuSans-Bold.ttf","DejaVuSans-Bold.ttf"]):
     FONT_BOLD = "Helvetica-Bold"
 
-# ---------------- Colors (matches 13-month) ----------------
+# ---------------- Colors ----------------
 season_colors = {
     "Winter": colors.Color(0.75,0.85,1.00),
     "Spring": colors.Color(1.00,0.85,0.95),
@@ -53,7 +59,7 @@ month_symbols = {1:"✶",2:"♥",3:"❀",4:"✿",5:"❧",6:"✢",7:"✺",8:"✸"
 zodiac_glyph  = {"Aries":"♈","Taurus":"♉","Gemini":"♊","Cancer":"♋","Leo":"♌","Virgo":"♍","Libra":"♎","Scorpio":"♏","Sagittarius":"♐","Capricorn":"♑","Aquarius":"♒","Pisces":"♓"}
 zodiac_order  = ["Aries","Taurus","Gemini","Cancer","Leo","Virgo","Libra","Scorpio","Sagittarius","Capricorn","Aquarius","Pisces"]
 
-# ---------------- Phases (your locked list) ----------------
+# ---------------- Phases (locked) ----------------
 full_moons = {
     dt.date(2026,1,3):"Cancer",  dt.date(2026,4,2):"Libra",
     dt.date(2026,8,28):"Pisces", dt.date(2026,9,26):"Aries",
@@ -197,7 +203,7 @@ def draw_front():
     c.setFont(FONT_REG,13);  c.drawCentredString(W/2,H-9.8*cm,"Seasonal palette · Winter blue · Spring pink · Summer gold · Autumn plum")
 draw_front(); c.showPage()
 
-# ---------------- Month page ----------------
+# ---------------- Month page (only real-day boxes) ----------------
 def draw_month_gregorian(year, month):
     name  = calendar.month_name[month]
     tint  = month_color_map[month]
@@ -212,108 +218,91 @@ def draw_month_gregorian(year, month):
 
     # layout
     lm,rm,tm,bm=1.8*cm,1.8*cm,3.0*cm,2.3*cm
-    left,top=lm,H-tm; cols,rows=7,6
-    cw=(W-lm-rm)/cols; ch=(H-tm-bm)/rows; pad=0.23*cm
+    left,top=lm,H-tm; cols=7
+    cw=(W-lm-rm)/cols; pad=0.23*cm
 
     # weekday header
     c.setFont(FONT_BOLD,12); c.setFillColor(fg)
     for i,wd in enumerate(["Mon","Tue","Wed","Thu","Fri","Sat","Sun"]):
         c.drawCentredString(left+cw*(i+0.5),top+0.45*cm,wd)
 
-    # matrix
-    cal = calendar.Calendar(firstweekday=0)
-    matrix = cal.monthdatescalendar(year, month)
-    while len(matrix) < 6:
-        matrix.append([matrix[-1][i]+dt.timedelta(days=7) for i in range(7)])
+    # month shape (no ghost boxes)
+    first_wd, days_in_month = calendar.monthrange(year, month)  # Mon=0..Sun=6
+    # rows needed:
+    rows = (first_wd + days_in_month + 6)//7  # ceil
 
-    # events per date
+    # build event dict only for real days
     day_events = {}
     def push(d, text): day_events.setdefault(d, []).append(text)
 
-    # daily Moon-in (only for in-month days)
-    for week in matrix:
-        for d in week:
-            if d.month == month:
-                ms = moon_sign_for_day(d)
-                push(d, f"Moon in {ms} {zodiac_glyph[ms]}")
-
-    # phases
-    for d in new_moons:
-        if d.month == month: push(d, "○ New Moon")
-    for d in full_moons:
-        if d.month == month: push(d, "● Full Moon")
-
-    # eclipses
-    for dE, kind in eclipses:
-        if dE.month == month:
-            if kind=="Lunar":
-                ms = moon_sign_for_day(dE)
-                push(dE, f"Lunar Eclipse {zodiac_glyph[ms]}")
-            else:
-                sdt=dt.datetime(dE.year,dE.month,dE.day,12,0,tzinfo=OSLO).astimezone(UTC)
-                slon=(float(ephem.Ecliptic(ephem.Sun(sdt)).lon)*180.0/math.pi)%360.0
-                ssign=zodiac_order[int(slon//30)]
-                push(dE, f"Solar Eclipse {zodiac_glyph[ssign]}")
-
-    # equinox/solstice
-    for d, label in season_markers.items():
-        if d.month == month: push(d, label)
-
-    # meteor windows
-    for a,b,label in METEOR_WINDOWS:
-        if a.month == month: push(a, label)
-        if b.month == month: push(b, label)
-
-    # Sun ingress
-    for d, s in sun_ingress.items():
-        if d.month == month: push(d, f"Sun → {s} {zodiac_glyph[s]}")
-
-    # planet ingresses compact
-    for d, items in planet_ingress_by_date.items():
-        if d.month == month:
-            compact = safe_join(items)
+    for day in range(1, days_in_month+1):
+        d = dt.date(year, month, day)
+        ms = moon_sign_for_day(d)
+        push(d, f"Moon in {ms} {zodiac_glyph[ms]}")
+        if d in new_moons:  push(d, "○ New Moon")
+        if d in full_moons: push(d, "● Full Moon")
+        for dE, kind in eclipses:
+            if d == dE:
+                if kind=="Lunar":
+                    msE = moon_sign_for_day(dE)
+                    push(d, f"Lunar Eclipse {zodiac_glyph[msE]}")
+                else:
+                    sdt=dt.datetime(dE.year,dE.month,dE.day,12,0,tzinfo=OSLO).astimezone(UTC)
+                    slon=(float(ephem.Ecliptic(ephem.Sun(sdt)).lon)*180.0/math.pi)%360.0
+                    ssign=zodiac_order[int(slon//30)]
+                    push(d, f"Solar Eclipse {zodiac_glyph[ssign]}")
+        if d in season_markers:  push(d, season_markers[d])
+        if d in GLOBAL_HOLIDAYS: push(d, GLOBAL_HOLIDAYS[d])
+        for a,b,label in METEOR_WINDOWS:
+            if a<=d<=b: push(d, label)
+        if d in sun_ingress:
+            s = sun_ingress[d]; push(d, f"Sun → {s} {zodiac_glyph[s]}")
+        if d in planet_ingress_by_date:
+            compact = safe_join(planet_ingress_by_date[d])
             push(d, first_wrapped_line(compact, FONT_BOLD, 7.2, cw-2*pad))
-
-    # Mercury R markers
-    for d, msgs in retro_markers.items():
-        if d.month == month:
-            txt = safe_join(msgs)
+        if d in retro_markers:
+            txt = safe_join(retro_markers[d])
             push(d, first_wrapped_line(txt, FONT_BOLD, 7.2, cw-2*pad))
 
-    # Special rule: Aug 27 no Full/Eclipse
+    # Aug 27 rule
     if month == 8:
         d27 = dt.date(2026,8,27)
         if d27 in day_events:
             day_events[d27] = [s for s in day_events[d27] if ("Full Moon" not in s and "Eclipse" not in s)]
 
-    # draw cells
-    for r in range(6):
-        for col in range(7):
-            d = matrix[r][col]
+    # vertical metrics depend on rows used
+    # total height for rows
+    total_h = H - (tm + bm) - 0.9*cm  # header height ~0.9cm
+    ch = total_h / rows
+
+    # draw only real-day cells
+    for r in range(rows):
+        for col in range(cols):
+            # map to day number
+            n = r*7 + col - first_wd + 1
+            if n < 1 or n > days_in_month:
+                continue  # NO BOX for out-of-month cells
+            d = dt.date(year, month, n)
+
             x = left + col*cw
-            y = top - (r+1)*ch
+            y = (H - tm - 0.9*cm) - (r+1)*ch  # below weekday header
+
+            # cell border
             c.setStrokeColor(colors.white); c.rect(x,y,cw,ch)
 
-            if d.month != month:
-                # out-of-month cells remain completely blank
-                continue
-
-            # stacked text (no tiny date label anymore)
+            # stack geometry
             stack_start = y + ch*0.63
             line_gap    = 0.28*cm
             safe_floor  = y + 0.92*cm
             usable_w    = cw - 2*pad
 
-            # collect lines
             lines = day_events.get(d, [])
-            if d in GLOBAL_HOLIDAYS:
-                lines.append(GLOBAL_HOLIDAYS[d])
-
+            # stable order
             priority = {"Moon in":0, "○ New Moon":1, "● Full Moon":1, "Eclipse":2,
                         "Equinox":3, "Solstice":3, "peak window":4,
                         "Sun →":5, "Mercury →":6, "Venus →":7, "Mars →":8,
                         "Jupiter →":9, "Saturn →":10, "Uranus →":11, "Neptune →":12, "Pluto →":13,
-                        "Mercury R":14}
+                        "Mercury R":14, "★":15}
             def keyfn(s):
                 for k,v in priority.items():
                     if s.startswith(k) or k in s: return v
@@ -342,9 +331,9 @@ def draw_month_gregorian(year, month):
                 c.drawString(x+pad, y_line, txt)
                 y_line -= line_gap; drawn += 1
 
-            # BIG day number bottom-center (only for in-month days)
+            # BIG day number bottom-center
             c.setFont(FONT_BOLD,18); c.setFillColor(fg)
-            c.drawCentredString(x+cw/2, y+0.28*cm, str(d.day))
+            c.drawCentredString(x+cw/2, y+0.28*cm, str(n))
 
 # ---------------- Information page ----------------
 def info_page():
@@ -405,7 +394,6 @@ def reference_page():
         for it in right_items: c.drawString(x_right,yR,fmt(it)); yR-=line_h
         return min(yL,yR)
 
-    # Full Moons
     traditional_names={1:"Wolf Moon",2:"Snow Moon",3:"Worm Moon",4:"Pink Moon",5:"Flower Moon",6:"Strawberry Moon",7:"Buck Moon",8:"Sturgeon Moon",9:"Harvest Moon",10:"Hunter’s Moon",11:"Beaver Moon",12:"Cold Moon"}
     fm=[]
     for d,sign in sorted(full_moons.items()):
@@ -415,10 +403,8 @@ def reference_page():
     def fmt_fm(it): d,sign,name=it; return f"{d.strftime('%b %d')}: Full Moon in {sign} {zodiac_glyph[sign]} · {name}"
     y_after_fm = draw_two_column_panel(left_x,right_x,top_y,"Full Moons 2026",fm,fmt_fm,rows_left_max=7)
 
-    # Bottom blocks
     y_next = y_after_fm - 1.0*cm
 
-    # Zodiac (bottom-left)
     c.setFont(FONT_BOLD,16); c.drawString(left_x,y_next,"Zodiac")
     y_z = y_next - 0.8*cm
     keywords={"Aries":"initiative · courage · spark","Taurus":"stability · senses · patience","Gemini":"curiosity · dialogue · agility","Cancer":"nurture · home · intuition","Leo":"creativity · heart · play","Virgo":"craft · service · clarity","Libra":"balance · beauty · harmony","Scorpio":"depth · devotion · transformation","Sagittarius":"vision · freedom · truth","Capricorn":"structure · ambition · endurance","Aquarius":"innovation · community · future","Pisces":"empathy · dreams · flow"}
@@ -430,7 +416,6 @@ def reference_page():
         c.setFont(FONT_REG,11);  c.drawString(left_x + label_width, y_z, keywords[s])
         y_z -= z_line_h
 
-    # Sun entries (bottom-right)
     c.setFont(FONT_BOLD,16); c.drawString(right_x,y_next,"Sun entries")
     y_s = y_next - 0.8*cm; c.setFont(FONT_REG,11)
     sun_items = sorted(sun_ingress.items())
@@ -449,10 +434,8 @@ def reference_page():
 
 # ---------------- Build ----------------
 def build():
-    # 12 month pages
     for m in range(1,13):
         draw_month_gregorian(2026, m); c.showPage()
-    # info + reference
     info_page()
     reference_page()
     c.save()
