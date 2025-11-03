@@ -1,82 +1,132 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <title>Serene · 13-Month Calendar 2026</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <base href="/serene-site/">
-  <style>
-    :root{--bg:#fff;--ink:#111;--muted:#666;--card:#f6f6f8;--accent:#ff5eb3}
-    html,body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,Inter,Arial}
-    .wrap{max-width:900px;margin:40px auto;padding:0 16px}
-    header{padding:18px 0 8px;border-bottom:1px solid #e9e9ee}
-    h1{margin:0;font-size:28px}
-    .sub{color:var(--muted);font-size:14px;margin-top:6px}
-    .zodiac{font-weight:700;font-size:22px;letter-spacing:2px;margin-top:10px}
-    .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin:24px 0 32px}
-    .card{background:var(--card);border-radius:14px;padding:16px;border:1px solid #e9e9ee}
-    .card h3{margin:0 0 8px 0;font-size:18px}
-    .card p{margin:0 0 12px 0;color:var(--muted)}
-    .btn{display:inline-block;padding:10px 14px;border-radius:999px;border:1px solid #ddd;background:#fff;color:#111;text-decoration:none}
-    .btn:hover{border-color:#bbb}
-    .accent{color:var(--accent);font-weight:700}
-    footer{margin:36px 0 24px;color:var(--muted);font-size:13px}
-    .paypal{margin-top:8px}
-  </style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Serene • 2026 Calendars</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#fbf9f6; --ink:#1b1716; --muted:#7b706d; --ring:rgba(0,0,0,.06);
+    --gold:#d7b56a; --plum:#593a59; --spring:#ffd1e8; --winter:#cfe0ff; --summer:#f6d57a;
+    --silver:#d3d6dc; --black:#111; --neonY:#ffd21f; --neonP:#ff8bc4; --neonG:#27e267; --neonB:#48a8ff;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif}
+  .wrap{max-width:1040px;margin:52px auto;padding:0 20px}
+  header{display:flex;align-items:end;justify-content:space-between;gap:16px;margin-bottom:26px}
+  h1{margin:0;font-size:28px;font-weight:800;letter-spacing:.2px}
+  .hint{color:var(--muted);font-size:14px}
+  h2{margin:26px 0 14px;font-size:20px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px}
+  .card{background:#fff;border:1px solid var(--ring);border-radius:14px;padding:16px 16px 18px;box-shadow:0 1px 0 rgba(0,0,0,.02)}
+  .title{display:flex;justify-content:space-between;gap:10px}
+  .title h3{margin:0;font-size:18px}
+  .price{font-weight:700}
+  .sub{margin:6px 0 12px;color:var(--muted);font-size:13px}
+  .swatch{display:grid;grid-template-columns:repeat(12,1fr);height:8px;border-radius:999px;overflow:hidden;margin-bottom:12px}
+  .s{height:100%}
+  .btn-row{display:flex;gap:8px;flex-wrap:wrap}
+  .btn{display:inline-block;background:#111;color:#fff;padding:10px 14px;border-radius:999px;font-weight:600;font-size:14px;text-decoration:none}
+  .btn.secondary{background:#eee;color:#111}
+  .btn-note{color:var(--muted);font-size:12px;margin-top:8px}
+  footer{margin:36px 0 10px;color:var(--muted);font-size:12px;text-align:center}
+</style>
 </head>
 <body>
-  <div class="wrap">
-    <header>
-      <h1>13-Month Calendar · 2026</h1>
-      <div class="sub">Core · Deluxe · Neon — identical content, different colorways</div>
-      <div class="zodiac">♈ ♉ ♊ ♋ ♌ ♍ ♎ ♏ ♐ ♑ ♒ ♓</div>
-    </header>
+<div class="wrap">
+  <header>
+    <h1>2026 Printable Calendars</h1>
+    <div class="hint">A4 landscape • print-friendly • $10 each</div>
+  </header>
 
-    <section class="cards">
-      <div class="card">
-        <h3>Core (Seasonal)</h3>
-        <p>Winter blue · Spring pink · Summer gold · Autumn plum</p>
-        <a class="btn" href="./calendars/2026-core.pdf" download>⬇ Download PDF</a>
-        <div class="paypal" id="paypal-core"></div>
+  <!-- 13-MONTH -->
+  <h2>13-Month Calendars</h2>
+  <div class="grid">
+    <!-- Core -->
+    <div class="card">
+      <div class="title"><h3>Core (Plain & Clean)</h3><div class="price">$10</div></div>
+      <div class="sub">Seasonal palette</div>
+      <div class="swatch">
+        <div class="s" style="background:var(--winter)"></div><div class="s" style="background:var(--winter)"></div>
+        <div class="s" style="background:var(--spring)"></div><div class="s" style="background:var(--spring)"></div>
+        <div class="s" style="background:var(--summer)"></div><div class="s" style="background:var(--summer)"></div>
+        <div class="s" style="background:var(--summer)"></div>
+        <div class="s" style="background:var(--plum)"></div><div class="s" style="background:var(--plum)"></div><div class="s" style="background:var(--plum)"></div>
+        <div class="s" style="background:var(--winter)"></div><div class="s" style="background:var(--winter)"></div>
       </div>
-
-      <div class="card">
-        <h3>Deluxe</h3>
-        <p>White · Gold · Black · Silver</p>
-        <a class="btn" href="./calendars/2026-deluxe.pdf" download>⬇ Download PDF</a>
-        <div class="paypal" id="paypal-deluxe"></div>
+      <div class="btn-row">
+        <a class="btn" href="./calendars/2026-core.pdf">Download PDF</a>
       </div>
+      <div class="btn-note">To accept payments, turn on PayPal later (easy).</div>
+    </div>
 
-      <div class="card">
-        <h3>Neon (Color-Pop)</h3>
-        <p>Yellow · Pink · Green · Blue</p>
-        <a class="btn" href="./calendars/2026-neon.pdf" download>⬇ Download PDF</a>
-        <div class="paypal" id="paypal-neon"></div>
+    <!-- Deluxe -->
+    <div class="card">
+      <div class="title"><h3>Deluxe (White • Gold • Black)</h3><div class="price">$10</div></div>
+      <div class="sub">Luxe contrast</div>
+      <div class="swatch">
+        <div class="s" style="background:#fff"></div><div class="s" style="background:#fff"></div>
+        <div class="s" style="background:var(--gold)"></div><div class="s" style="background:var(--gold)"></div><div class="s" style="background:var(--gold)"></div>
+        <div class="s" style="background:var(--black)"></div><div class="s" style="background:var(--black)"></div><div class="s" style="background:var(--black)"></div>
+        <div class="s" style="background:var(--silver)"></div><div class="s" style="background:var(--silver)"></div><div class="s" style="background:var(--silver)"></div>
+        <div class="s" style="background:#fff"></div>
       </div>
-    </section>
+      <div class="btn-row">
+        <a class="btn" href="./calendars/2026-deluxe.pdf">Download PDF</a>
+      </div>
+    </div>
 
-    <footer>
-      <div>© 2026 Serene. All rights reserved.</div>
-      <div style="font-size:13px;color:#666">Served from <code>/serene-site/</code> via GitHub Pages.</div>
-    </footer>
+    <!-- Neon -->
+    <div class="card">
+      <div class="title"><h3>Color-Pop (Neon)</h3><div class="price">$10</div></div>
+      <div class="sub">Vivid palette</div>
+      <div class="swatch">
+        <div class="s" style="background:var(--neonY)"></div><div class="s" style="background:var(--neonY)"></div>
+        <div class="s" style="background:var(--neonP)"></div><div class="s" style="background:var(--neonP)"></div><div class="s" style="background:var(--neonP)"></div>
+        <div class="s" style="background:var(--neonG)"></div><div class="s" style="background:var(--neonG)"></div><div class="s" style="background:var(--neonG)"></div>
+        <div class="s" style="background:var(--neonB)"></div><div class="s" style="background:var(--neonB)"></div><div class="s" style="background:var(--neonB)"></div>
+        <div class="s" style="background:var(--neonY)"></div>
+      </div>
+      <div class="btn-row">
+        <a class="btn" href="./calendars/2026-neon.pdf">Download PDF</a>
+      </div>
+    </div>
   </div>
 
-  <!-- Optional PayPal: replace YOUR_CLIENT_ID when ready -->
-  <script src="https://www.paypal.com/sdk/js?client-id=YOUR_CLIENT_ID&currency=USD"></script>
-  <script>
-    function paypalBtn(el, desc, value, file){
-      if(!window.paypal) return;
-      paypal.Buttons({
-        style:{ shape:"pill", color:"gold" },
-        createOrder:(d,a)=>a.order.create({
-          purchase_units:[{ description:desc, amount:{ value:value } }]
-        }),
-        onApprove:(d,a)=>a.order.capture().then(()=>{ window.location.href = file; })
-      }).render(el);
-    }
-    paypalBtn('#paypal-core',   '13-Month Calendar (Core)',   '10.00', './calendars/2026-core.pdf');
-    paypalBtn('#paypal-deluxe', '13-Month Calendar (Deluxe)', '12.00', './calendars/2026-deluxe.pdf');
-    paypalBtn('#paypal-neon',   '13-Month Calendar (Neon)',   '12.00', './calendars/2026-neon.pdf');
-  </script>
+  <!-- 12-MONTH -->
+  <h2>12-Month Calendars</h2>
+  <div class="grid">
+    <div class="card">
+      <div class="title"><h3>Core (Plain & Clean)</h3><div class="price">$10</div></div>
+      <div class="sub">Seasonal palette</div>
+      <div class="swatch"><div class="s" style="background:var(--winter)"></div><div class="s" style="background:var(--spring)"></div><div class="s" style="background:var(--summer)"></div><div class="s" style="background:var(--plum)"></div><div class="s" style="background:var(--winter)"></div><div class="s" style="background:var(--spring)"></div><div class="s" style="background:var(--summer)"></div><div class="s" style="background:var(--plum)"></div><div class="s" style="background:var(--winter)"></div><div class="s" style="background:var(--spring)"></div><div class="s" style="background:var(--summer)"></div><div class="s" style="background:var(--plum)"></div></div>
+      <div class="btn-row">
+        <a class="btn secondary" href="#" onclick="alert('Coming soon ✨');return false;">Coming soon</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="title"><h3>Deluxe (White • Gold • Black)</h3><div class="price">$10</div></div>
+      <div class="sub">Luxe contrast</div>
+      <div class="swatch"><div class="s" style="background:#fff"></div><div class="s" style="background:var(--gold)"></div><div class="s" style="background:var(--black)"></div><div class="s" style="background:var(--silver)"></div><div class="s" style="background:#fff"></div><div class="s" style="background:var(--gold)"></div><div class="s" style="background:var(--black)"></div><div class="s" style="background:var(--silver)"></div><div class="s" style="background:#fff"></div><div class="s" style="background:var(--gold)"></div><div class="s" style="background:var(--black)"></div><div class="s" style="background:var(--silver)"></div></div>
+      <div class="btn-row">
+        <a class="btn secondary" href="#" onclick="alert('Coming soon ✨');return false;">Coming soon</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="title"><h3>Color-Pop (Neon)</h3><div class="price">$10</div></div>
+      <div class="sub">Vivid palette</div>
+      <div class="swatch"><div class="s" style="background:var(--neonY)"></div><div class="s" style="background:var(--neonP)"></div><div class="s" style="background:var(--neonG)"></div><div class="s" style="background:var(--neonB)"></div><div class="s" style="background:var(--neonY)"></div><div class="s" style="background:var(--neonP)"></div><div class="s" style="background:var(--neonG)"></div><div class="s" style="background:var(--neonB)"></div><div class="s" style="background:var(--neonY)"></div><div class="s" style="background:var(--neonP)"></div><div class="s" style="background:var(--neonG)"></div><div class="s" style="background:var(--neonB)"></div></div>
+      <div class="btn-row">
+        <a class="btn secondary" href="#" onclick="alert('Coming soon ✨');return false;">Coming soon</a>
+      </div>
+    </div>
+  </div>
+
+  <footer>© 2026 Serene. All rights reserved.</footer>
+</div>
 </body>
 </html>
