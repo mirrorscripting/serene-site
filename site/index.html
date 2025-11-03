@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Serene — 2026 Calendars</title>
+  <link rel="stylesheet" href="css/styles.css"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+</head>
+<body>
+  <header class="hero">
+    <div class="hero-card">
+      <h1>The 2026 Calendars</h1>
+      <p class="subtitle">13-Month & 12-Month • $10 each</p>
+      <p class="micro">White background • clean • cute • readable 💎</p>
+      <div class="filters">
+        <div class="pill-group" id="typePills">
+          <button class="pill active" data-type="all">All</button>
+          <button class="pill" data-type="13">13-Month</button>
+          <button class="pill" data-type="12">12-Month</button>
+        </div>
+        <div class="pill-group" id="stylePills">
+          <button class="pill active" data-style="all">All styles</button>
+          <button class="pill" data-style="core">Core</button>
+          <button class="pill" data-style="deluxe">Deluxe</button>
+          <button class="pill" data-style="neon">Color Pop</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section id="grid" class="grid"></section>
+  </main>
+
+  <footer class="foot">
+    <div class="wrap">
+      <p>© 2026 Serene. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script>
+    // ---------- SET YOUR PAYPAL EMAIL ----------
+    const PAYPAL_EMAIL = "YOUR_PAYPAL_EMAIL@example.com"; // <-- change me
+    const RETURN_URL   = "https://mirrorscripting.github.io/serene-site/site/?paid=1";
+    const CANCEL_URL   = "https://mirrorscripting.github.io/serene-site/site/?cancel=1";
+
+    // Catalog
+    const PRODUCTS = [
+      { id:"13-core",   title:"13-Month · Core (Seasonal)", blurb:"Winter blue · Spring pink · Summer gold · Autumn plum", price:"10.00", preview:"downloads/13/core-2026-v1.pdf",          style:"core",   type:"13" },
+      { id:"13-deluxe", title:"13-Month · Deluxe (White • Gold • Black • Silver)", blurb:"Winter white · Spring gold · Summer black · Autumn silver", price:"10.00", preview:"downloads/13/deluxe-2026-wgbs-v1.pdf", style:"deluxe", type:"13" },
+      { id:"13-neon",   title:"13-Month · Color Pop (Neon)", blurb:"Winter yellow · Spring pink · Summer green · Autumn blue", price:"10.00", preview:"downloads/13/colorpop-2026-v1.pdf",    style:"neon",   type:"13" },
+      { id:"12-core",   title:"12-Month · Core (Seasonal)", blurb:"Winter blue · Spring pink · Summer gold · Autumn plum", price:"10.00", preview:"downloads/12/core-2026-v1.pdf",          style:"core",   type:"12" },
+      { id:"12-deluxe", title:"12-Month · Deluxe (White • Gold • Black • Silver)", blurb:"Winter white · Spring gold · Summer black · Autumn silver", price:"10.00", preview:"downloads/12/deluxe-2026-wgbs-v1.pdf", style:"deluxe", type:"12" },
+      { id:"12-neon",   title:"12-Month · Color Pop (Neon)", blurb:"Winter yellow · Spring pink · Summer green · Autumn blue", price:"10.00", preview:"downloads/12/colorpop-2026-v1.pdf",    style:"neon",   type:"12" },
+    ];
+
+    function paypalLink({title, price}) {
+      const params = new URLSearchParams({
+        cmd: "_xclick",
+        business: PAYPAL_EMAIL,
+        item_name: title,
+        amount: price,
+        currency_code: "USD",
+        no_note: "1",
+        return: RETURN_URL,
+        cancel_return: CANCEL_URL
+      });
+      return "https://www.paypal.com/cgi-bin/webscr?" + params.toString();
+    }
+
+    function cardHTML(p) {
+      const styleTag = { core:"Core", deluxe:"Deluxe", neon:"Color Pop" }[p.style] || "Style";
+      const typeTag  = p.type === "13" ? "13-Month" : "12-Month";
+      return `
+        <article class="card" data-style="${p.style}" data-type="${p.type}">
+          <div class="card-head">
+            <span class="badge">${typeTag}</span>
+            <span class="badge soft">${styleTag}</span>
+          </div>
+          <h3>${p.title}</h3>
+          <p class="blurb">${p.blurb}</p>
+          <div class="actions">
+            <a class="btn ghost" href="${p.preview}" target="_blank" rel="noopener">Preview PDF</a>
+            <a class="btn primary" href="${paypalLink(p)}" target="_blank" rel="noopener">Buy $${p.price}</a>
+          </div>
+        </article>
+      `;
+    }
+
+    function render(filterType="all", filterStyle="all") {
+      const grid = document.getElementById("grid");
+      grid.innerHTML = PRODUCTS
+        .filter(p => filterType==="all" || p.type===filterType)
+        .filter(p => filterStyle==="all" || p.style===filterStyle)
+        .map(cardHTML).join("");
+    }
+
+    function hookPills(id, cb) {
+      const group = document.getElementById(id);
+      group.addEventListener("click", e => {
+        const btn = e.target.closest("button"); if(!btn) return;
+        [...group.querySelectorAll(".pill")].forEach(b=>b.classList.remove("active"));
+        btn.classList.add("active"); cb(btn.dataset);
+      });
+    }
+
+    let currentType="all", currentStyle="all";
+    hookPills("typePills",  ({type})  => { currentType = type;  render(currentType,currentStyle); });
+    hookPills("stylePills", ({style}) => { currentStyle = style; render(currentType,currentStyle); });
+    render();
+  </script>
+</body>
+</html>
