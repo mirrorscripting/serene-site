@@ -7,13 +7,15 @@
   <link rel="stylesheet" href="css/styles.css"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <!-- PayPal Smart Buttons (shows PayPal + Card) -->
+  <script src="https://www.paypal.com/sdk/js?client-id=YOUR_PAYPAL_CLIENT_ID&currency=USD&intent=capture"></script>
 </head>
 <body>
   <header class="hero">
     <div class="hero-card">
       <h1>The 2026 Calendars</h1>
       <p class="subtitle">13-Month & 12-Month • $10 each</p>
-      <p class="micro">White background • clean • cute • readable 💎</p>
+      <p class="micro">Astrological • clean • cute • readable</p>
       <div class="filters">
         <div class="pill-group" id="typePills">
           <button class="pill active" data-type="all">All</button>
@@ -36,39 +38,45 @@
 
   <footer class="foot">
     <div class="wrap">
-      <p>© 2026 Serene. All rights reserved.</p>
+      <p>© 2026 Serene. All rights reserved. · Contact: <a id="contactEmail" href="mailto:hello@example.com">hello@example.com</a></p>
     </div>
   </footer>
 
   <script>
-    // ---------- SET YOUR PAYPAL EMAIL ----------
-    const PAYPAL_EMAIL = "YOUR_PAYPAL_EMAIL@example.com"; // <-- change me
-    const RETURN_URL   = "https://mirrorscripting.github.io/serene-site/site/?paid=1";
-    const CANCEL_URL   = "https://mirrorscripting.github.io/serene-site/site/?cancel=1";
+    // ---------- SETTINGS ----------
+    const CONTACT_EMAIL = "YOUR_VISIBLE_EMAIL@example.com";   // shows in footer
+    document.getElementById("contactEmail").textContent = CONTACT_EMAIL;
+    document.getElementById("contactEmail").href = "mailto:" + CONTACT_EMAIL;
+
+    // Where to redirect after payment (deliver the full PDF)
+    const DELIVERY = {
+      "13-core":   "downloads/13/core-2026-v1.pdf",
+      "13-deluxe": "downloads/13/deluxe-2026-wgbs-v1.pdf",
+      "13-neon":   "downloads/13/colorpop-2026-v1.pdf",
+      "12-core":   "downloads/12/core-2026-v1.pdf",
+      "12-deluxe": "downloads/12/deluxe-2026-wgbs-v1.pdf",
+      "12-neon":   "downloads/12/colorpop-2026-v1.pdf",
+    };
+
+    // Previews (single page)
+    const PREVIEW = {
+      "13-core":   "previews/core-preview.pdf",
+      "13-deluxe": "previews/deluxe-preview.pdf",
+      "13-neon":   "previews/neon-preview.pdf",
+      "12-core":   "previews/core-preview.pdf",
+      "12-deluxe": "previews/deluxe-preview.pdf",
+      "12-neon":   "previews/neon-preview.pdf",
+    };
 
     // Catalog
     const PRODUCTS = [
-      { id:"13-core",   title:"13-Month · Core (Seasonal)", blurb:"Winter blue · Spring pink · Summer gold · Autumn plum", price:"10.00", preview:"downloads/13/core-2026-v1.pdf",          style:"core",   type:"13" },
-      { id:"13-deluxe", title:"13-Month · Deluxe (White • Gold • Black • Silver)", blurb:"Winter white · Spring gold · Summer black · Autumn silver", price:"10.00", preview:"downloads/13/deluxe-2026-wgbs-v1.pdf", style:"deluxe", type:"13" },
-      { id:"13-neon",   title:"13-Month · Color Pop (Neon)", blurb:"Winter yellow · Spring pink · Summer green · Autumn blue", price:"10.00", preview:"downloads/13/colorpop-2026-v1.pdf",    style:"neon",   type:"13" },
-      { id:"12-core",   title:"12-Month · Core (Seasonal)", blurb:"Winter blue · Spring pink · Summer gold · Autumn plum", price:"10.00", preview:"downloads/12/core-2026-v1.pdf",          style:"core",   type:"12" },
-      { id:"12-deluxe", title:"12-Month · Deluxe (White • Gold • Black • Silver)", blurb:"Winter white · Spring gold · Summer black · Autumn silver", price:"10.00", preview:"downloads/12/deluxe-2026-wgbs-v1.pdf", style:"deluxe", type:"12" },
-      { id:"12-neon",   title:"12-Month · Color Pop (Neon)", blurb:"Winter yellow · Spring pink · Summer green · Autumn blue", price:"10.00", preview:"downloads/12/colorpop-2026-v1.pdf",    style:"neon",   type:"12" },
+      { id:"13-core",   title:"13-Month · Core (Seasonal)", blurb:"Winter blue · Spring pink · Summer gold · Autumn plum", price:"10.00", style:"core",   type:"13" },
+      { id:"13-deluxe", title:"13-Month · Deluxe (White • Gold • Black • Silver)", blurb:"Winter white · Spring gold · Summer black · Autumn silver", price:"10.00", style:"deluxe", type:"13" },
+      { id:"13-neon",   title:"13-Month · Color Pop (Neon)", blurb:"Winter yellow · Spring pink · Summer green · Autumn blue", price:"10.00", style:"neon",   type:"13" },
+      { id:"12-core",   title:"12-Month · Core (Seasonal)", blurb:"Winter blue · Spring pink · Summer gold · Autumn plum", price:"10.00", style:"core",   type:"12" },
+      { id:"12-deluxe", title:"12-Month · Deluxe (White • Gold • Black • Silver)", blurb:"Winter white · Spring gold · Summer black · Autumn silver", price:"10.00", style:"deluxe", type:"12" },
+      { id:"12-neon",   title:"12-Month · Color Pop (Neon)", blurb:"Winter yellow · Spring pink · Summer green · Autumn blue", price:"10.00", style:"neon",   type:"12" },
     ];
-
-    function paypalLink({title, price}) {
-      const params = new URLSearchParams({
-        cmd: "_xclick",
-        business: PAYPAL_EMAIL,
-        item_name: title,
-        amount: price,
-        currency_code: "USD",
-        no_note: "1",
-        return: RETURN_URL,
-        cancel_return: CANCEL_URL
-      });
-      return "https://www.paypal.com/cgi-bin/webscr?" + params.toString();
-    }
 
     function cardHTML(p) {
       const styleTag = { core:"Core", deluxe:"Deluxe", neon:"Color Pop" }[p.style] || "Style";
@@ -82,8 +90,8 @@
           <h3>${p.title}</h3>
           <p class="blurb">${p.blurb}</p>
           <div class="actions">
-            <a class="btn ghost" href="${p.preview}" target="_blank" rel="noopener">Preview PDF</a>
-            <a class="btn primary" href="${paypalLink(p)}" target="_blank" rel="noopener">Buy $${p.price}</a>
+            <a class="btn ghost" href="${PREVIEW[p.id]}" target="_blank" rel="noopener">Preview (1 page)</a>
+            <div id="pp-${p.id}"></div>
           </div>
         </article>
       `;
@@ -91,12 +99,27 @@
 
     function render(filterType="all", filterStyle="all") {
       const grid = document.getElementById("grid");
-      grid.innerHTML = PRODUCTS
+      const items = PRODUCTS
         .filter(p => filterType==="all" || p.type===filterType)
-        .filter(p => filterStyle==="all" || p.style===filterStyle)
-        .map(cardHTML).join("");
+        .filter(p => filterStyle==="all" || p.style===filterStyle);
+
+      grid.innerHTML = items.map(cardHTML).join("");
+
+      // Attach PayPal buttons (PayPal + Card)
+      items.forEach(p => {
+        paypal.Buttons({
+          style: { shape: "pill", color: "gold" },
+          createOrder: (data, actions) => actions.order.create({
+            purchase_units: [{ description: p.title, amount: { value: p.price } }]
+          }),
+          onApprove: (data, actions) => actions.order.capture().then(() => {
+            window.location.href = DELIVERY[p.id];
+          })
+        }).render("#pp-" + p.id);
+      });
     }
 
+    // filter pills
     function hookPills(id, cb) {
       const group = document.getElementById(id);
       group.addEventListener("click", e => {
@@ -105,7 +128,6 @@
         btn.classList.add("active"); cb(btn.dataset);
       });
     }
-
     let currentType="all", currentStyle="all";
     hookPills("typePills",  ({type})  => { currentType = type;  render(currentType,currentStyle); });
     hookPills("stylePills", ({style}) => { currentStyle = style; render(currentType,currentStyle); });
