@@ -1,0 +1,32 @@
+{
+  "name": "serene-site",
+  "version": "1.0.0",
+  "description": "",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "vitest",
+    "legacy:build": "source .venv/bin/activate && python legacy/generator.py && (xdg-open out/2026/index.html || true)",
+    "cal:core": ".venv/bin/python legacy/generator.py --variant core --out out/2026-core.pdf && (xdg-open out/2026-core.pdf || true)",
+    "cal:deluxe": ".venv/bin/python legacy/generator.py --variant deluxe --out out/2026-deluxe.pdf",
+    "cal:neon": ".venv/bin/python legacy/generator.py --variant neon --out out/2026-neon.pdf"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mirrorscripting/serene-site.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mirrorscripting/serene-site/issues"
+  },
+  "homepage": "https://github.com/mirrorscripting/serene-site#readme",
+  "devDependencies": {
+    "vite": "^7.1.12",
+    "vitest": "^2.1.6"
+  }
+}

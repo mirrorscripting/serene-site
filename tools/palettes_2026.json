@@ -1,0 +1,30 @@
+{
+  "core": {
+    "front_line": "Seasonal palette · Winter blue · Spring pink · Summer gold · Autumn plum",
+    "borders": "auto", 
+    "months": {
+      "winter": {"bg": [0.75,0.85,1.00], "text": "black", "weekday": "black", "border": "black"},
+      "spring": {"bg": [1.00,0.85,0.95], "text": "black", "weekday": "black", "border": "black"},
+      "summer": {"bg": [1.00,0.93,0.70], "text": "black", "weekday": "black", "border": "black"},
+      "autumn": {"bg": [0.45,0.30,0.45], "text": "white", "weekday": "white", "border": "white"}
+    }
+  },
+  "deluxe": {
+    "front_line": "Deluxe palette · Winter white · Spring gold · Summer black · Autumn silver",
+    "months": {
+      "winter": {"bg": "white", "text": "black", "weekday": "black", "border": "black"},
+      "spring": {"bg": [0.96,0.80,0.16], "text": "black", "weekday": "black", "border": "black"},
+      "summer": {"bg": "black", "text": "white", "weekday": "white", "border": "white"},
+      "autumn": {"bg": [0.92,0.93,0.96], "text": "black", "weekday": "black", "border": "black"}
+    }
+  },
+  "neon": {
+    "front_line": "Color Pop palette · Yellow winter · Pink spring · Green summer · Blue autumn",
+    "months": {
+      "winter": {"bg": [1.00,0.95,0.12], "text": "black", "weekday": "black", "border": "black"},
+      "spring": {"bg": [1.00,0.24,0.62], "text": "black", "weekday": "black", "border": "black"},
+      "summer": {"bg": [0.22,1.00,0.08], "text": "black", "weekday": "black", "border": "black"},
+      "autumn": {"bg": [0.00,0.78,1.00], "text": "black", "weekday": "black", "border": "black"}
+    }
+  }
+}
