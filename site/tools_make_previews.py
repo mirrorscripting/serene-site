@@ -1,6 +1,6 @@
 # tools_make_previews.py
-# Generates six one-page A4 landscape previews (compact layout).
-# Output: site/previews/*.pdf
+# One-page PREVIEW PDFs (white). Hearts as bullets, grey "Details" box
+# sized only as needed, with the "Details" heading above the box.
 
 import os
 from reportlab.lib.pagesizes import landscape, A4
@@ -10,167 +10,182 @@ from reportlab.lib.units import cm
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 
-# ---------------- fonts ----------------
+OUT_DIR = "site/previews"
+
+# -------- fonts --------
 FONT = "DejaVuSans"
-FONT_B = "DejaVuSans-Bold"
-
-def _reg(name, paths):
-    for p in paths:
-        if os.path.exists(p):
-            pdfmetrics.registerFont(TTFont(name, p))
-            return True
-    return False
-
-if not _reg(FONT, [
+for p in (
     "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
     "/usr/share/fonts/TTF/DejaVuSans.ttf",
     "/usr/local/share/fonts/DejaVuSans.ttf",
     "DejaVuSans.ttf",
-]): FONT = "Helvetica"
+):
+    if os.path.exists(p):
+        pdfmetrics.registerFont(TTFont(FONT, p))
+        break
+else:
+    FONT = "Helvetica"
 
-if not _reg(FONT_B, [
-    "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",
-    "/usr/share/fonts/TTF/DejaVuSans-Bold.ttf",
-    "/usr/local/share/fonts/DejaVuSans-Bold.ttf",
-    "DejaVuSans-Bold.ttf",
-]): FONT_B = "Helvetica-Bold"
+# -------- theme data --------
+ZODIAC_ROW = "♈ ♉ ♊ ♋ ♌ ♍ ♎ ♏ ♐ ♑ ♒ ♓"
+HEART = "♥"
 
-# ---------------- constants ----------------
-ZROW = "♈ ♉ ♊ ♋ ♌ ♍ ♎ ♏ ♐ ♑ ♒ ♓"
-STYLE_TITLE = {"core":"Core", "deluxe":"Deluxe", "neon":"Color Pop"}
-SEASONS = ["Winter", "Spring", "Summer", "Autumn"]
+CORE   = [colors.Color(0.75,0.85,1.00), colors.Color(1.00,0.85,0.95),
+          colors.Color(1.00,0.93,0.70), colors.Color(0.45,0.30,0.45)]
+DELUXE = [colors.white, colors.Color(0.96,0.80,0.20),
+          colors.black, colors.Color(0.82,0.84,0.86)]
+NEON   = [colors.Color(1.00,0.82,0.12), colors.Color(1.00,0.60,0.85),
+          colors.Color(0.10,0.95,0.35), colors.Color(0.20,0.55,1.00)]
 
-# palettes (Winter, Spring, Summer, Autumn)
-PALETTE = {
-    "core": [
-        colors.Color(0.75,0.85,1.00),     # winter blue
-        colors.Color(1.00,0.85,0.95),     # spring pink
-        colors.Color(1.00,0.93,0.70),     # summer gold
-        colors.Color(0.45,0.30,0.45),     # autumn plum
-    ],
-    "deluxe": [
-        colors.white,                     # winter white
-        colors.Color(0.96,0.80,0.20),     # spring gold
-        colors.black,                     # summer black
-        colors.Color(0.82,0.84,0.86),     # autumn silver
-    ],
-    "neon": [
-        colors.Color(1.00,0.82,0.12),     # winter yellow
-        colors.Color(1.00,0.60,0.85),     # spring pink
-        colors.Color(0.10,0.95,0.35),     # summer green
-        colors.Color(0.20,0.55,1.00),     # autumn blue
-    ],
-}
+# -------- drawing helpers --------
+def draw_title_block(c, W, top_y, heading):
+    c.setFillColor(colors.black)
+    c.setFont(FONT, 22)
+    c.drawCentredString(W/2, top_y, heading)
+    c.setFont(FONT, 11.5)
+    c.drawCentredString(W/2, top_y - 0.9*cm, "All colors are included")
+    c.setFont(FONT, 14)
+    c.drawCentredString(W/2, top_y - 1.8*cm, ZODIAC_ROW)
 
-INCLUDES_13 = [
-    "Thirteen month calendar with one Year Day",
-    "Includes all dates of the twelve month year",
-    "Moon daily sign for all three hundred sixty five days",
-    "New Moons ○ and Full Moons ●",
-    "Sun sign entries",
-    "Planet ingresses Mercury to Pluto",
-    "Mercury retrograde start and end",
-    "Meteor showers peak windows",
-]
-INCLUDES_12 = [
-    "Twelve month calendar",
-    "Moon daily sign for all three hundred sixty five days",
-    "New Moons ○ and Full Moons ●",
-    "Sun sign entries",
-    "Planet ingresses Mercury to Pluto",
-    "Mercury retrograde start and end",
-    "Meteor showers peak windows",
-]
+def quad_swatch(c, x, y, size, cols):
+    r = 14
+    c.setLineWidth(1.2)
+    c.setStrokeColor(colors.Color(0,0,0,0.15))
+    c.roundRect(x, y, size, size, r, stroke=True, fill=False)
 
-# ---------------- drawing helpers ----------------
-def chip_shadow(c, x, y, w, h, r=14, opacity=0.10):
-    c.saveState()
-    c.setFillColor(colors.Color(0,0,0,opacity))
-    c.roundRect(x+0.14*cm, y-0.14*cm, w, h, r, fill=1, stroke=0)
-    c.restoreState()
+    half = size/2.0
+    # 4 color quadrants
+    c.setFillColor(cols[0]); c.roundRect(x,            y+half, half+0.4, half+0.4, r, stroke=False, fill=True)
+    c.setFillColor(cols[1]); c.roundRect(x+half-0.4,   y+half, half+0.4, half+0.4, r, stroke=False, fill=True)
+    c.setFillColor(cols[2]); c.roundRect(x,            y,      half+0.4, half+0.4, r, stroke=False, fill=True)
+    c.setFillColor(cols[3]); c.roundRect(x+half-0.4,   y,      half+0.4, half+0.4, r, stroke=False, fill=True)
 
-def draw_preview(path, cal_type, style):
-    os.makedirs(os.path.dirname(path), exist_ok=True)
-    c = canvas.Canvas(path, pagesize=landscape(A4))
+def palette_tile(c, x_center, y_bottom, label, cols):
+    tile_size = 3.6*cm
+    x = x_center - tile_size/2.0
+    y = y_bottom
+    quad_swatch(c, x, y, tile_size, cols)
+    c.setFillColor(colors.black); c.setFont(FONT, 12.5)
+    c.drawCentredString(x_center, y - 0.5*cm, label)
+
+def bullets(kind):
+    heart = HEART
+    if kind == "13":
+        whats = [
+            f"{heart} Thirteen month calendar with one Year Day",
+            f"{heart} Includes all dates of the twelve month year",
+            f"{heart} Moon daily sign for all three hundred sixty five days",
+            f"{heart} New Moons ○ and Full Moons ●",
+            f"{heart} Sun sign entries",
+            f"{heart} Planet ingresses Mercury to Pluto",
+            f"{heart} Mercury retrograde start and end",
+            f"{heart} Meteor showers peak windows",
+            f"{heart} Information page with explanations",
+            f"{heart} Own ingress page",
+        ]
+        details = ["Edition: Thirteen month", "Size: A4 landscape", "Print friendly and screen friendly"]
+    else:
+        whats = [
+            f"{heart} Twelve month calendar",
+            f"{heart} Moon daily sign for all three hundred sixty five days",
+            f"{heart} New Moons ○ and Full Moons ●",
+            f"{heart} Sun sign entries",
+            f"{heart} Planet ingresses Mercury to Pluto",
+            f"{heart} Mercury retrograde start and end",
+            f"{heart} Meteor showers peak windows",
+            f"{heart} Information page with explanations",
+            f"{heart} Own ingress page",
+        ]
+        details = ["Edition: Twelve month", "Size: A4 landscape", "Print friendly and screen friendly"]
+    return whats, details
+
+def draw_text_block(c, left_x, right_x, top_y, whats, details):
+    # top divider
+    c.setStrokeColor(colors.Color(0,0,0,0.10)); c.setLineWidth(1)
+    c.line(left_x, top_y, right_x, top_y)
+
+    lh   = 0.58*cm
+    size = 11
+    col_gap = 1.2*cm
+    col_w   = (right_x - left_x - col_gap)/2.0
+    L = left_x
+    R = left_x + col_w + col_gap
+
+    # left heading + list
+    c.setFillColor(colors.black); c.setFont(FONT, 13)
+    c.drawString(L, top_y - 0.8*cm, "What’s included")
+    yL = top_y - 1.6*cm
+    c.setFont(FONT, size)
+    for line in whats:
+        c.drawString(L, yL, line); yL -= lh
+
+    # Right column — smaller grey box sized to content, title above the box
+    c.setFillColor(colors.black); c.setFont(FONT, 13)
+    title_y = top_y - 0.8*cm
+    c.drawString(R, title_y, "Details")
+
+    # measure details height
+    lines_h = len(details) * lh
+    pad_y = 0.6*cm   # slimmer box
+    pad_x = 0.5*cm
+    # width: fit longest line (approx) but clamp to a max
+    max_chars = max(len(s) for s in details) if details else 0
+    approx_char_w = 0.21 * cm   # rough width of one glyph at 11pt
+    box_w = min(col_w, max(7.0*cm, max_chars * approx_char_w) + 2*pad_x)
+
+    box_top = title_y - 0.35*cm
+    total_h = lines_h + 2*pad_y
+    box_bottom = box_top - total_h
+
+    c.setFillColor(colors.Color(0.95,0.96,0.98))
+    c.setStrokeColor(colors.Color(0,0,0,0.10)); c.setLineWidth(1.2)
+    c.roundRect(R - pad_x, box_bottom, box_w, total_h, 10, stroke=True, fill=True)
+
+    # vertically center the detail lines inside the box
+    text_start = box_bottom + (total_h - lines_h)/2 + (lh * (len(details)-1))
+    c.setFillColor(colors.black); c.setFont(FONT, size)
+    for i, line in enumerate(details):
+        y = text_start - i * lh
+        c.drawString(R, y, line)
+
+def build_preview(kind, out_path, heading):
+    os.makedirs(os.path.dirname(out_path), exist_ok=True)
+    c = canvas.Canvas(out_path, pagesize=landscape(A4))
     W, H = landscape(A4)
 
-    # background and frame
-    c.setFillColor(colors.white); c.rect(0,0,W,H,fill=1,stroke=0)
-    m = 1.4*cm
-    c.setStrokeColor(colors.Color(0,0,0,0.10))
-    c.setLineWidth(1.8)
-    c.roundRect(m, m, W-2*m, H-2*m, 12, stroke=1, fill=0)
+    # background
+    c.setFillColor(colors.white); c.rect(0, 0, W, H, fill=True, stroke=False)
 
-    # header (more compact)
-    title = f"2026 Calendar · {STYLE_TITLE[style]}"
-    c.setFillColor(colors.black)
-    c.setFont(FONT_B, 28); c.drawCentredString(W/2, H-2.6*cm, title)
-    c.setFont(FONT, 14);   c.drawCentredString(W/2, H-3.7*cm, "Astrological · clean · cute · readable")
-    c.setFont(FONT_B, 18); c.drawCentredString(W/2, H-4.8*cm, ZROW)
+    # title + zodiac
+    top = H - 1.8*cm
+    draw_title_block(c, W, top, heading)
 
-    # color chips smaller and tighter
-    chips = PALETTE[style]
-    chip_w, chip_h = 4.4*cm, 4.4*cm   # smaller
-    gap = 0.9*cm                      # tighter
-    total_w = 4*chip_w + 3*gap
-    left_x = (W - total_w)/2
-    base_y = H - 10.3*cm              # higher up to save space
+    # three palette tiles
+    row_y = H - 8.2*cm
+    x1, x2, x3 = W/2 - 8.0*cm, W/2, W/2 + 8.0*cm
+    palette_tile(c, x1, row_y, "Core seasonal", CORE)
+    palette_tile(c, x2, row_y, "Deluxe", DELUXE)
+    palette_tile(c, x3, row_y, "Color Pop", NEON)
 
-    for i, (label, col) in enumerate(zip(SEASONS, chips)):
-        x = left_x + i*(chip_w + gap)
-        chip_shadow(c, x, base_y, chip_w, chip_h, r=14, opacity=0.10)
-        c.setFillColor(col); c.roundRect(x, base_y, chip_w, chip_h, 14, fill=1, stroke=0)
-        c.setFillColor(colors.black); c.setFont(FONT_B, 11.5)
-        c.drawCentredString(x + chip_w/2, base_y - 0.45*cm, label)
+    # content rows
+    left_x, right_x = 2.2*cm, W - 2.2*cm
+    whats, details = bullets(kind)
+    draw_text_block(c, left_x, right_x, row_y - 1.2*cm, whats, details)
 
-    # content columns sit higher and narrower
-    left_col_x = 2.2*cm
-    right_col_x = W - 9.0*cm - 2.2*cm
-    top_y = base_y - 1.2*cm
-
-    # What's included
-    c.setFillColor(colors.black)
-    c.setFont(FONT_B, 16); c.drawString(left_col_x, top_y, "What’s included")
-    c.setFont(FONT, 11.8)
-    y = top_y - 0.9*cm
-    items = INCLUDES_13 if cal_type == "13" else INCLUDES_12
-    for line in items:
-        c.drawString(left_col_x, y, f"• {line}")
-        y -= 0.66*cm
-
-    # Details card (smaller)
-    card_w, card_h = 9.0*cm, 4.0*cm
-    card_x, card_y = right_col_x, top_y - 0.2*cm - card_h
-    c.setFillColor(colors.Color(0,0,0,0.04))
-    c.roundRect(card_x, card_y, card_w, card_h, 10, fill=1, stroke=0)
-    c.setFillColor(colors.black)
-    c.setFont(FONT_B, 13); c.drawString(card_x+0.8*cm, card_y+card_h-1.2*cm, "Details")
-    c.setFont(FONT, 11.8)
-    tag = "Thirteen month" if cal_type == "13" else "Twelve month"
-    c.drawString(card_x+0.8*cm, card_y+card_h-2.1*cm, f"Edition: {tag}")
-    c.drawString(card_x+0.8*cm, card_y+card_h-2.9*cm, "Size: A4 landscape")
-    c.drawString(card_x+0.8*cm, card_y+card_h-3.7*cm, "Print friendly and screen friendly")
-
-    # footer copy (no hyphens)
-    c.setFillColor(colors.Color(0,0,0,0.70)); c.setFont(FONT, 10.5)
-    c.drawCentredString(W/2, 1.95*cm, "Preview page only  full one hundred percent content delivered after purchase.")
-    c.setFillColor(colors.black); c.setFont(FONT, 9.5)
-    c.drawCentredString(W/2, 1.35*cm, "© 2026 Serene. All rights reserved.")
+    # footer
+    c.setFillColor(colors.Color(0,0,0,0.60)); c.setFont(FONT, 9.6)
+    c.drawCentredString(W/2, 1.35*cm, f"Preview page only {HEART} full content delivered after purchase.")
+    c.setFillColor(colors.Color(0,0,0,0.75))
+    c.drawCentredString(W/2, 0.95*cm, "© 2026 Serene. All rights reserved.")
 
     c.showPage(); c.save()
-    print("Saved:", path)
+    print(f"Saved: {os.path.abspath(out_path)}")
 
 def main():
-    targets = [
-        ("13","core","site/previews/13-core-preview.pdf"),
-        ("13","deluxe","site/previews/13-deluxe-preview.pdf"),
-        ("13","neon","site/previews/13-neon-preview.pdf"),
-        ("12","core","site/previews/12-core-preview.pdf"),
-        ("12","deluxe","site/previews/12-deluxe-preview.pdf"),
-        ("12","neon","site/previews/12-neon-preview.pdf"),
-    ]
-    for t, s, p in targets:
-        draw_preview(p, t, s)
+    build_preview("13", os.path.join(OUT_DIR, "13-bundle-preview.pdf"),
+                  "Thirteen Month Calendar Preview")
+    build_preview("12", os.path.join(OUT_DIR, "12-bundle-preview.pdf"),
+                  "Twelve Month Calendar Preview")
 
 if __name__ == "__main__":
     main()
