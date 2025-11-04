@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>The 2026 Calendars</title>
+<style>
+  :root{
+    --bg:#ffffff; --ink:#111; --muted:#6b7280; --line:#e5e7eb; --card:#fff;
+    --shadow:0 8px 24px rgba(0,0,0,.08); --radius:14px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial}
+  .wrap{max-width:1100px;margin:0 auto;padding:20px}
+  header{padding:14px 0 8px;text-align:center}
+  header h1{font-size:34px;margin:6px 0}
+  header .sub{color:#555;margin-top:4px}
+  .filters{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:16px 0 6px}
+  .chip{border:1px solid var(--line);background:#f7f7f8;border-radius:999px;padding:8px 12px;cursor:pointer;font-weight:600}
+  .chip.on{background:#111;color:#fff;border-color:#111}
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  @media (max-width:980px){ .grid{grid-template-columns:repeat(2,1fr)} }
+  @media (max-width:640px){ .grid{grid-template-columns:1fr} }
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px}
+  .topline{display:flex;gap:8px;margin-bottom:10px}
+  .pill{font-size:12px;border:1px solid var(--line);border-radius:999px;padding:4px 8px;background:#fff}
+  .title{font-weight:800;margin:6px 0 2px}
+  .palette{color:#444;margin:0 0 8px}
+  ul{margin:0 0 10px 18px;padding:0}
+  li{margin:4px 0}
+  .actions{display:flex;flex-direction:column;gap:10px;margin-top:10px}
+  .btn{display:flex;justify-content:center;align-items:center;gap:8px;border:1.8px solid #111;border-radius:999px;padding:10px 14px;background:#fff;cursor:pointer;font-weight:700}
+  .btn:hover{background:#f5f5f5}
+  .btn.gray{border-color:#333;background:#111;color:#fff}
+  .price{font-weight:800;margin-top:2px}
+  footer{display:flex;justify-content:space-between;align-items:center;color:#666;border-top:1px solid var(--line);padding:18px 0;margin-top:18px;font-size:14px}
+  /* Modal */
+  dialog{width:min(980px,96vw);height:min(86vh,900px);border:1px solid var(--line);border-radius:14px;padding:0;box-shadow:var(--shadow)}
+  dialog::backdrop{background:rgba(0,0,0,.35)}
+  .mhead{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;border-bottom:1px solid var(--line)}
+  .icon{border:1px solid var(--line);background:#fff;border-radius:8px;padding:6px 10px;cursor:pointer}
+  iframe{width:100%;height:calc(100% - 50px);border:0;background:#fff}
+  /* Small helpers */
+  .muted{color:#777}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>The 2026 Calendars</h1>
+    <div class="sub muted">13-Month & 12-Month · $10 each</div>
+    <div class="sub muted">Astrological · clean · cute · readable</div>
+
+    <div class="filters" id="filters">
+      <button class="chip on" data-g="all">All</button>
+      <button class="chip" data-g="13">13-Month</button>
+      <button class="chip" data-g="12">12-Month</button>
+      <span style="width:14px"></span>
+      <button class="chip on" data-s="all">All styles</button>
+      <button class="chip" data-s="Core">Core</button>
+      <button class="chip" data-s="Deluxe">Deluxe</button>
+      <button class="chip" data-s="Color Pop">Color Pop</button>
+    </div>
+  </header>
+
+  <section class="grid" id="grid" aria-label="Calendar products"></section>
+
+  <footer>
+    <div>© 2026 Serene. All rights reserved.</div>
+    <div>Contact: <a href="mailto:serene@example.com">serene@example.com</a></div>
+  </footer>
+</div>
+
+<!-- Preview modal -->
+<dialog id="modal">
+  <div class="mhead">
+    <strong id="mtitle">Preview</strong>
+    <button class="icon" id="closeModal">✕</button>
+  </div>
+  <iframe id="frame" title="Preview PDF" loading="lazy"></iframe>
+</dialog>
+
+<script>
+/* --------- Data (edit prices/paths as needed) --------- */
+const ITEMS = [
+  {
+    id:"13_core", group:"13", style:"Core",
+    title:"13-Month · Core (Seasonal)",
+    palette:"Winter blue · Spring pink · Summer gold · Autumn plum",
+    bullets:["Full & New Moons","Sun + Planet ingresses","Mercury retro markers","Meteor shower peak windows","13-month includes all 12-month dates"],
+    preview:"previews/13-core-preview.pdf",
+    file:"assets/Calendar_2026_13_core.pdf",
+    price:"$10.00"
+  },
+  {
+    id:"13_deluxe", group:"13", style:"Deluxe",
+    title:"13-Month · Deluxe",
+    palette:"Winter white · Spring gold · Summer black · Autumn silver",
+    bullets:["Full & New Moons","Sun + Planet ingresses","Mercury retro markers","Meteor shower peak windows","13-month includes all 12-month dates"],
+    preview:"previews/13-deluxe-preview.pdf",
+    file:"assets/Calendar_2026_13_deluxe.pdf",
+    price:"$10.00"
+  },
+  {
+    id:"13_neon", group:"13", style:"Color Pop",
+    title:"13-Month · Color Pop (Neon)",
+    palette:"Winter yellow · Spring pink · Summer green · Autumn blue",
+    bullets:["Full & New Moons","Sun + Planet ingresses","Mercury retro markers","Meteor shower peak windows","13-month includes all 12-month dates"],
+    preview:"previews/13-neon-preview.pdf",
+    file:"assets/Calendar_2026_13_neon.pdf",
+    price:"$10.00"
+  },
+  {
+    id:"12_core", group:"12", style:"Core",
+    title:"12-Month · Core (Seasonal)",
+    palette:"Winter blue · Spring pink · Summer gold · Autumn plum",
+    bullets:["Full & New Moons","Sun + Planet ingresses","Mercury retro markers","Meteor shower peak windows","13-month includes all 12-month dates"],
+    preview:"previews/12-core-preview.pdf",
+    file:"assets/Calendar_2026_12_core.pdf",
+    price:"$10.00"
+  },
+  {
+    id:"12_deluxe", group:"12", style:"Deluxe",
+    title:"12-Month · Deluxe",
+    palette:"Winter white · Spring gold · Summer black · Autumn silver",
+    bullets:["Full & New Moons","Sun + Planet ingresses","Mercury retro markers","Meteor shower peak windows","13-month includes all 12-month dates"],
+    preview:"previews/12-deluxe-preview.pdf",
+    file:"assets/Calendar_2026_12_deluxe.pdf",
+    price:"$10.00"
+  },
+  {
+    id:"12_neon", group:"12", style:"Color Pop",
+    title:"12-Month · Color Pop (Neon)",
+    palette:"Winter yellow · Spring pink · Summer green · Autumn blue",
+    bullets:["Full & New Moons","Sun + Planet ingresses","Mercury retro markers","Meteor shower peak windows","13-month includes all 12-month dates"],
+    preview:"previews/12-neon-preview.pdf",
+    file:"assets/Calendar_2026_12_neon.pdf",
+    price:"$10.00"
+  }
+];
+
+/* --------- Render --------- */
+const grid = document.getElementById("grid");
+const modal = document.getElementById("modal");
+const frame = document.getElementById("frame");
+const mtitle = document.getElementById("mtitle");
+document.getElementById("closeModal").addEventListener("click",()=>modal.close());
+
+function el(html){ const t=document.createElement("template"); t.innerHTML=html.trim(); return t.content.firstChild; }
+
+function productCard(p){
+  const bullets = p.bullets.map(x=>`<li>${x}</li>`).join("");
+  const node = el(`
+    <article class="card" data-id="${p.id}" data-g="${p.group}" data-s="${p.style}">
+      <div class="topline">
+        <span class="pill">${p.group}-Month</span>
+        <span class="pill">${p.style}</span>
+      </div>
+      <div class="title">${p.title}</div>
+      <div class="palette muted">${p.palette}</div>
+      <ul>${bullets}</ul>
+      <div class="actions">
+        <button class="btn" data-act="preview">Preview (1-page)</button>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn gray" disabled>PayPal Buy Now</button>
+          <button class="btn" disabled>Debit or Credit Card</button>
+        </div>
+        <div class="price">${p.price}</div>
+      </div>
+    </article>
+  `);
+  node.addEventListener("click", async (e)=>{
+    const a = e.target.closest("[data-act]");
+    if(!a) return;
+    if(a.dataset.act==="preview"){
+      mtitle.textContent = `Preview · ${p.title}`;
+      // prefer preview if exists, else product
+      try {
+        const r = await fetch(p.preview, { method:"HEAD" });
+        frame.src = r.ok ? p.preview : p.file;
+      } catch { frame.src = p.file; }
+      modal.showModal();
+    }
+  });
+  return node;
+}
+
+function render(list){ grid.innerHTML=""; list.forEach(p=>grid.appendChild(productCard(p))); }
+
+/* --------- Filters --------- */
+const fwrap = document.getElementById("filters");
+let currentGroup = "all";
+let currentStyle = "all";
+
+fwrap.addEventListener("click",(e)=>{
+  const btn = e.target.closest(".chip");
+  if(!btn) return;
+  if(btn.dataset.g){
+    currentGroup = btn.dataset.g;
+    fwrap.querySelectorAll('[data-g]').forEach(x=>x.classList.toggle('on', x===btn));
+  }
+  if(btn.dataset.s){
+    currentStyle = btn.dataset.s;
+    fwrap.querySelectorAll('[data-s]').forEach(x=>x.classList.toggle('on', x===btn));
+  }
+  applyFilters();
+});
+
+function applyFilters(){
+  const list = ITEMS.filter(p=>{
+    const g = currentGroup==="all" || p.group===currentGroup;
+    const s = currentStyle==="all" || p.style===currentStyle;
+    return g && s;
+  });
+  render(list);
+}
+
+/* --------- Init --------- */
+applyFilters();
+
+/* --------- Notes ---------
+To wire payments later:
+1) Replace the disabled buttons with PayPal Smart Buttons or your checkout link.
+2) Keep the product ids (p.id) as your SKUs for server calls.
+-------------------------------------------------------------- */
+</script>
+</body>
+</html>
