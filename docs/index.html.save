@@ -1,0 +1,225 @@
+!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Serene — 2026 Calendars</title>
+  <link rel="stylesheet" href="css/styles.css"/>
+
+  <!-- Google font for clean professional look -->
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+
+  <!-- PayPal Smart Buttons (PayPal + debit/credit cards) -->
+  <!-- Leave the placeholder; we’ll swap in your client-id with one command later -->
+  <script src="https://www.paypal.com/sdk/js?client-id=AcpBHhv12FpAc0hWgWSezT4aCQNGhlGhmb1OUwkQS1gagxwi45BNDXDvrofr5dDbNWsmBQt1rjY2rrAr&currency=USD&components=buttons,funding-eligibility&enable-funding=card&disable-funding=paylater"></script>
+</head>
+<body>
+  <header class="hero">
+    <div class="hero-card">
+      <h1>The 2026 Calendars</h1>
+      <p class="subtitle">13-Month & 12-Month • $10 each</p>
+      <p class="micro">Astrological · clean · cute · readable</p>
+
+      <div class="filters">
+        <div class="pill-group" id="typePills">
+          <button class="pill active" data-type="all">All</button>
+          <button class="pill" data-type="13">13-Month</button>
+          <button class="pill" data-type="12">12-Month</button>
+        </div>
+        <div class="pill-group" id="stylePills">
+          <button class="pill active" data-style="all">All styles</button>
+          <button class="pill" data-style="core">Core</button>
+          <button class="pill" data-style="deluxe">Deluxe</button>
+          <button class="pill" data-style="neon">Color Pop</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section id="grid" class="grid"></section>
+  </main>
+
+  <section class="contact">
+    <div class="wrap contact-inner">
+      <h2>Contact</h2>
+      <p>Questions or custom orders? <a id="contactLink" href="mailto:SereneLunar@icloud.com?subject=Calendar%20Inquiry">Email me</a>.</p>
+    </div>
+  </section>
+
+  <footer class="foot">
+    <div class="wrap">
+      <p>© 2026 Serene. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <template id="card-template">
+    <article class="card">
+      <div class="card-head">
+        <span class="badge type"></span>
+        <span class="badge soft style"></span>
+      </div>
+      <h3 class="title"></h3>
+      <p class="blurb"></p>
+
+      <!-- Preview: single-page A4 landscape -->
+      <div class="actions">
+        <a class="btn ghost preview" target="_blank" rel="noopener">Preview</a>
+        <button class="btn primary buy">Buy $<span class="price"></span></button>
+      </div>
+
+      <!-- PayPal button container (renders on demand) -->
+      <div class="paypal-wrap" hidden>
+        <div class="paypal-note">Secure checkout — PayPal or card</div>
+        <div class="paypal-buttons"></div>
+        <button class="paypal-cancel">Close</button>
+      </div>
+    </article>
+  </template>
+
+  <script>
+  // ===== CONFIG YOU CAN EDIT WITHOUT BREAKING ANYTHING =====
+  // The email shown in the Contact section:
+  const CONTACT_EMAIL = "hello@example.com";
+
+  // After a successful payment we’ll redirect to the full calendar file:
+  // These are your “deliverables” (the purchase).
+  const DOWNLOADS = {
+    "13-core":   "downloads/13/core-2026-v1.pdf",
+    "13-deluxe": "downloads/13/deluxe-2026-wgbs-v1.pdf",
+    "13-neon":   "downloads/13/colorpop-2026-v1.pdf",
+    "12-core":   "downloads/12/core-2026-v1.pdf",
+    "12-deluxe": "downloads/12/deluxe-2026-wgbs-v1.pdf",
+    "12-neon":   "downloads/12/colorpop-2026-v1.pdf"
+  };
+
+  // Single-page PREVIEW files (A4 landscape, one page):
+  const PREVIEWS = {
+    "13-core":   "previews/13-core-preview.pdf",
+    "13-deluxe": "previews/13-deluxe-preview.pdf",
+    "13-neon":   "previews/13-neon-preview.pdf",
+    "12-core":   "previews/12-core-preview.pdf",
+    "12-deluxe": "previews/12-deluxe-preview.pdf",
+    "12-neon":   "previews/12-neon-preview.pdf"
+  };
+
+  // Product list
+  const PRODUCTS = [
+    { id:"13-core",   title:"13-Month · Core",   blurb:"Winter blue · Spring pink · Summer gold · Autumn plum. Includes full & new moons, Sun entries, planet ingresses, Mercury retro periods, meteor showers, and daily Moon signs across all 365 days.",  price:"10.00", style:"core",   type:"13" },
+    { id:"13-deluxe", title:"13-Month · Deluxe", blurb:"Winter white · Spring gold · Summer black · Autumn silver. Includes full & new moons, Sun entries, planet ingresses, Mercury retro periods, meteor showers, and daily Moon signs across all 365 days.",  price:"10.00", style:"deluxe", type:"13" },
+    { id:"13-neon",   title:"13-Month · Color Pop", blurb:"Winter yellow · Spring pink · Summer green · Autumn blue. Includes full & new moons, Sun entries, planet ingresses, Mercury retro periods, meteor showers, and daily Moon signs across all 365 days.",  price:"10.00", style:"neon",   type:"13" },
+    { id:"12-core",   title:"12-Month · Core",   blurb:"Seasonal palette. Includes full & new moons, Sun entries, planet ingresses, Mercury retro periods, meteor showers, and daily Moon signs across all 365 days.",  price:"10.00", style:"core",   type:"12" },
+    { id:"12-deluxe", title:"12-Month · Deluxe", blurb:"White · gold · black · silver. Includes full & new moons, Sun entries, planet ingresses, Mercury retro periods, meteor showers, and daily Moon signs across all 365 days.",  price:"10.00", style:"deluxe", type:"12" },
+    { id:"12-neon",   title:"12-Month · Color Pop", blurb:"Neon set. Includes full & new moons, Sun entries, planet ingresses, Mercury retro periods, meteor showers, and daily Moon signs across all 365 days.",  price:"10.00", style:"neon",   type:"12" },
+  ];
+
+  // ===== UI RENDER =====
+  const grid = document.getElementById("grid");
+  const tpl  = document.getElementById("card-template");
+
+  function makeCard(p) {
+    const node = tpl.content.cloneNode(true);
+    node.querySelector(".type").textContent  = (p.type === "13") ? "13-Month" : "12-Month";
+    node.querySelector(".style").textContent = ({core:"Core", deluxe:"Deluxe", neon:"Color Pop"})[p.style] || p.style;
+    node.querySelector(".title").textContent = p.title;
+    node.querySelector(".blurb").textContent = p.blurb;
+    node.querySelector(".price").textContent = p.price;
+
+    const previewA = node.querySelector(".preview");
+    previewA.href = PREVIEWS[p.id] || "#";
+
+    // Pay area
+    const buyBtn  = node.querySelector(".buy");
+    const wrap    = node.querySelector(".paypal-wrap");
+    const btnHost = node.querySelector(".paypal-buttons");
+    const close   = node.querySelector(".paypal-cancel");
+
+    buyBtn.addEventListener("click", () => {
+      wrap.hidden = false;
+      // render PayPal buttons only once
+      if (!btnHost.dataset.rendered) {
+        if (!window.paypal || !window.paypal.Buttons) {
+          btnHost.innerHTML = '<div class="paypal-warning">Activate your PayPal client-id to load checkout buttons.</div>';
+        } else {
+          window.paypal.Buttons({
+            style: {
+              shape:  "pill",
+              height: 40,
+              label:  "pay",
+              layout: "vertical",
+              color:  "black"   // cute, neutral; not the default yellow
+            },
+            fundingSource: undefined, // allow PayPal + cards
+            createOrder: function(data, actions) {
+              return actions.order.create({
+                purchase_units: [{
+                  description: p.title,
+                  amount: { value: p.price }
+                }]
+              });
+            },
+            onApprove: function(data, actions) {
+              return actions.order.capture().then(function(details) {
+                // send the buyer to the full calendar download
+                const url = DOWNLOADS[p.id];
+                if (url) window.location.href = url;
+              });
+            },
+            onCancel: function() { /* no-op */ },
+            onError: function(err) {
+              console.error(err);
+              btnHost.innerHTML = '<div class="paypal-warning">Checkout error. Please retry in a moment.</div>';
+            }
+          }).render(btnHost);
+          btnHost.dataset.rendered = "1";
+        }
+      }
+      // smooth scroll to the button area (mobile friendliness)
+      wrap.scrollIntoView({ behavior: "smooth", block: "center" });
+    });
+
+    close.addEventListener("click", () => {
+      wrap.hidden = true;
+    });
+
+    // dataset for filtering
+    const art = node.querySelector(".card");
+    art.dataset.type  = p.type;
+    art.dataset.style = p.style;
+
+    return node;
+  }
+
+  function render(type="all", style="all") {
+    grid.innerHTML = "";
+    PRODUCTS
+      .filter(p => type==="all"  || p.type===type)
+      .filter(p => style==="all" || p.style===style)
+      .forEach(p => grid.appendChild(makeCard(p)));
+  }
+
+  function hookPills(id, cb) {
+    const group = document.getElementById(id);
+    group.addEventListener("click", (e) => {
+      const btn = e.target.closest("button");
+      if (!btn) return;
+      [...group.querySelectorAll(".pill")].forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      cb(btn.dataset);
+    });
+  }
+
+  let currentType = "all", currentStyle = "all";
+  hookPills("typePills",  ({type})  => { currentType  = type;  render(currentType, currentStyle); });
+  hookPills("stylePills", ({style}) => { currentStyle = style; render(currentType, currentStyle); });
+  render();
+
+  // contact link
+  const contact = document.getElementById("contactLink");
+  contact.href  = `mailto:${CONTACT_EMAIL}?subject=Calendar%20Inquiry`;
+  contact.textContent = CONTACT_EMAIL;
+  </script>
+</body>
+</html>
+
