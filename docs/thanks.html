@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Thank you — Serene Calendars</title>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <style>
+    :root{--ink:#111;--ring:#e8e8ec}
+    body{font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;color:var(--ink);margin:0;background:#fff}
+    .wrap{max-width:800px;margin:0 auto;padding:24px}
+    .card{border:1px solid var(--ring);border-radius:18px;padding:22px}
+    .title{font-size:28px;margin:6px 0 6px}
+    .muted{color:#666}
+    .downloads{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+    .btn{display:inline-block;text-decoration:none;font-weight:800;border-radius:12px;padding:10px 14px;border:2px solid #111}
+    .btn.primary{background:#111;color:#fff}
+    .btn.ghost{background:#fff;color:#111}
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <div class="card">
+      <h1 class="title">Thank you! ✨</h1>
+      <p class="muted" id="what"></p>
+      <div class="downloads" id="links"></div>
+      <p class="muted" style="margin-top:16px">If you have trouble, email <a href="mailto:hello@example.com">hello@example.com</a>.</p>
+    </div>
+  </main>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const sku = params.get("sku") || "";
+    const raw = params.get("downloads") || "[]";
+    let files = [];
+    try { files = JSON.parse(decodeURIComponent(raw)); } catch(e) { files = []; }
+
+    const what = document.getElementById("what");
+    const links = document.getElementById("links");
+
+    const label = (p) => {
+      if (p.includes("core")) return "Download — Core (Seasonal)";
+      if (p.includes("deluxe")) return "Download — Deluxe";
+      if (p.includes("colorpop")) return "Download — Color Pop";
+      return "Download file";
+    };
+
+    if (sku === "13-bundle") {
+      what.textContent = "Your 13-Month Calendar — all three colorways:";
+    } else if (sku === "12-bundle") {
+      what.textContent = "Your 12-Month Calendar — all three colorways:";
+    } else {
+      what.textContent = "Your downloads:";
+    }
+
+    if (!files.length) {
+      const p = document.createElement("p");
+      p.textContent = "No files found. Please contact support.";
+      links.appendChild(p);
+    } else {
+      files.forEach(p => {
+        const a = document.createElement("a");
+        a.href = p;
+        a.className = "btn primary";
+        a.textContent = label(p);
+        a.setAttribute("download", "");
+        links.appendChild(a);
+      });
+    }
+  </script>
+</body>
+</html>
