@@ -1,4 +1,4 @@
-<!doctype html>
+!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8"/>
@@ -81,7 +81,7 @@
   <script>
   // ===== CONFIG YOU CAN EDIT WITHOUT BREAKING ANYTHING =====
   // The email shown in the Contact section:
-  const CONTACT_EMAIL = "SereneLunar@icloud.com";
+  const CONTACT_EMAIL = "hello@example.com";
 
   // After a successful payment we’ll redirect to the full calendar file:
   // These are your “deliverables” (the purchase).
