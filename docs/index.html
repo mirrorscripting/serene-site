@@ -4,17 +4,49 @@
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>Serene — 2026 Calendars</title>
-  <link rel="stylesheet" href="css/styles.css"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <style>
+    :root{--ink:#111;--muted:#63666a;--ring:#eceff3;--card:#fff;--bg:#fff;--pill:#111}
+    *{box-sizing:border-box} html,body{margin:0;background:#fff;color:var(--ink);font-family:Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif}
+    .wrap{max-width:1100px;margin:0 auto;padding:24px}
+    .hero{padding:32px 16px;text-align:center}
+    .hero-card{display:inline-block;background:#fff;border:1px solid var(--ring);border-radius:20px;padding:24px 28px;box-shadow:0 10px 30px rgba(0,0,0,.06)}
+    h1{margin:0 0 6px;font-size:34px} .subtitle{margin:0 0 6px;font-weight:600}
+    .micro{margin:0;color:var(--muted);font-size:14px}
+    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:18px;margin-top:12px}
+    .card{background:var(--card);border:1px solid var(--ring);border-radius:18px;padding:18px;box-shadow:0 10px 24px rgba(0,0,0,.05)}
+    .badge{display:inline-block;background:#111;color:#fff;border-radius:999px;padding:6px 10px;font-size:12px;font-weight:800}
+    h3{margin:10px 0 4px;font-size:20px}
+    .blurb{margin:0 0 12px;color:var(--muted);font-size:14px}
+    .actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+    .btn{appearance:none;border:2px solid #111;border-radius:12px;padding:10px 14px;text-decoration:none;font-weight:800;color:#111;background:#fff;display:inline-flex;align-items:center;gap:8px}
+    .btn:hover{transform:translateY(-1px)}
+    .btn.primary{background:#111;color:#fff}
+    .pp-slot{min-width:210px;min-height:45px}
+    .notice{border:1px solid var(--ring);background:#f9fbff;border-radius:12px;padding:10px 12px;font-size:14px}
+    .foot{padding:24px 0 40px;text-align:center;color:var(--muted);font-size:14px}
+    .contact{margin-top:8px}
+  </style>
 </head>
 <body>
+  <!-- ======= CONFIG (edit these three) ======= -->
+  <script>
+    // 1) Your PayPal REST client id (sandbox for testing, live when ready)
+    const PAYPAL_CLIENT_ID = "AcpBHhv12FpAc0hWgWSezT4aCQNGhlGhmb1OUwkQS1gagxwi45BNDXDvrofr5dDbNWsmBQt1rjY2rrAr";
+    // 2) Business PayPal email (recipient of classic-fallback payments)
+    const PAYPAL_BUSINESS_EMAIL = "serenelnese@gmail.com";
+    // 3) Public contact email shown on the page footer
+    const CONTACT_EMAIL = "serenelunar@icloud.com";
+  </script>
+  <!-- ======================================== -->
+
   <header class="hero">
     <div class="hero-card">
       <h1>The 2026 Calendars</h1>
-      <p class="subtitle">13-Month & 12-Month • $10 each</p>
-      <p class="micro">Astrological • clean • cute • readable 💎</p>
-      <p class="micro">Each purchase includes <b>all color palettes</b> (Core seasonal, Deluxe, Color Pop).</p>
+      <p class="subtitle">13-Month & 12-Month · $10 each</p>
+      <p class="micro">Astrological · clean · cute · readable 💎</p>
+      <p class="micro"><b>Each purchase includes all color palettes</b> (Core seasonal, Deluxe, Color Pop).</p>
     </div>
   </header>
 
@@ -24,109 +56,116 @@
 
   <footer class="foot">
     <div class="wrap">
-      <p>© 2026 Serene. All rights reserved.</p>
+      <div>© 2026 Serene. All rights reserved.</div>
+      <div class="contact">Contact: <a href="#" id="contactLink">email</a></div>
     </div>
   </footer>
 
-  <!-- PayPal SDK — sandbox ready. This shows PayPal + Card. 
-       When you go live, replace client-id=sb with your real client id. -->
-  <script src="https://www.paypal.com/sdk/js?client-id=sb&currency=USD&components=buttons&enable-funding=card,venmo"></script>
+  <!-- Robust PayPal SDK loader (forces US buyer context so Card shows) -->
+  <script>
+    (function addPayPalSdk(){
+      const q = new URLSearchParams({
+        "client-id": PAYPAL_CLIENT_ID,
+        currency: "USD",
+        components: "buttons",
+        "enable-funding": "card",
+        intent: "capture",
+        "buyer-country": "US",
+        locale: "en_US",
+        commit: "true"
+      });
+      const s = document.createElement("script");
+      s.src = `https://www.paypal.com/sdk/js?${q.toString()}`;
+      s.async = true;
+      s.onerror = () => setTimeout(addPayPalSdk, 1500);
+      document.head.appendChild(s);
+    })();
+  </script>
 
   <script>
-  // ---------------- PRODUCTS (2 SKUs) ----------------
-  const PRODUCTS = [
-    {
-      id: "cal-13",
-      title: "13-Month Calendar (all colors)",
-      price: "10.00",
-      preview: "previews/13-bundle-preview.pdf",
-      thanks: "Thank you for your purchase 💖<br/>Attached are your 2026 calendars. You received all three color palettes: ♥ Core seasonal ♥ Deluxe ♥ Color Pop<br/><br/>Preview tip: print A4 landscape or view on any device.<br/>Plan thoughtfully for your days — they all matter.<br/><br/>Love,<br/>Serene ♥"
-    },
-    {
-      id: "cal-12",
-      title: "12-Month Calendar (all colors)",
-      price: "10.00",
-      preview: "previews/12-bundle-preview.pdf",
-      thanks: "Thank you for your purchase 💖<br/>Attached are your 2026 calendars. You received all three color palettes: ♥ Core seasonal ♥ Deluxe ♥ Color Pop<br/><br/>Preview tip: print A4 landscape or view on any device.<br/>Plan thoughtfully for your days — they all matter.<br/><br/>Love,<br/>Serene ♥"
+    // ---------- products (only two) ----------
+    const PRODUCTS = [
+      { id:"cal-13", title:"13-Month Calendar (all colors)", price:"10.00", preview:"previews/13-bundle-preview.pdf" },
+      { id:"cal-12", title:"12-Month Calendar (all colors)", price:"10.00", preview:"previews/12-bundle-preview.pdf" },
+    ];
+
+    // classic fallback (opens if Smart Buttons can’t initialize)
+    function classicCheckoutUrl(title, price){
+      const p = new URLSearchParams({
+        cmd: "_xclick",
+        business: PAYPAL_BUSINESS_EMAIL,
+        item_name: title,
+        amount: price,
+        currency_code: "USD",
+        no_note: "1"
+      });
+      return `https://www.paypal.com/cgi-bin/webscr?${p.toString()}`;
     }
-  ];
 
-  // ---------------- UI ----------------
-  function cardHTML(p) {
-    return `
-      <article class="card">
-        <div class="card-head">
+    // card + PayPal smart button (black style)
+    function renderSmartButtons(slotId, product){
+      // if the SDK hasn’t loaded yet, retry a few times
+      let tries = 0; const max = 12;
+      (function mount(){
+        if (!window.paypal) { if (++tries<=max) return setTimeout(mount,150); return useFallback(); }
+        try{
+          paypal.Buttons({
+            style:{
+              layout:"horizontal",
+              color:"black",     // black button, no yellow
+              shape:"pill",
+              label:"buynow",
+              height:45,
+              tagline:false
+            },
+            createOrder: (data, actions) => actions.order.create({
+              purchase_units: [{
+                description: product.title,
+                amount: { value: product.price, currency_code:"USD" },
+                items: [{ name: product.title, unit_amount:{ value: product.price, currency_code:"USD" }, quantity:"1" }]
+              }]
+            }),
+            onApprove: (data, actions) => actions.order.capture().then(()=>{
+              const slot = document.getElementById(slotId);
+              slot.innerHTML = `<div class="notice">Payment received 💖 — check your email for download links.</div>`;
+              window.scrollTo({top:0,behavior:"smooth"});
+            }),
+            onError: () => useFallback()
+          }).render(`#${slotId}`).catch(useFallback);
+        }catch{ useFallback(); }
+
+        function useFallback(){
+          const slot = document.getElementById(slotId);
+          const url = classicCheckoutUrl(product.title, product.price);
+          slot.innerHTML = `<a class="btn primary" href="${url}" target="_blank" rel="noopener">Buy $${product.price}</a>`;
+        }
+      })();
+    }
+
+    function cardHTML(p){
+      const id = `ppbtn-${p.id}`;
+      return `
+        <article class="card">
           <span class="badge">Calendar</span>
-        </div>
-        <h3>${p.title}</h3>
-        <p class="blurb">Includes Core seasonal, Deluxe, and Color Pop palettes.</p>
-        <div class="actions">
-          <a class="btn ghost" href="${p.preview}" target="_blank" rel="noopener">Preview PDF</a>
-          <div class="btn-area">
-            <div id="ppbtn-${p.id}"></div>
+          <h3>${p.title}</h3>
+          <p class="blurb">Includes Core seasonal, Deluxe, and Color Pop palettes.</p>
+          <div class="actions">
+            <a class="btn" href="${p.preview}" target="_blank" rel="noopener">Preview PDF</a>
+            <span class="pp-slot" id="${id}"></span>
           </div>
-        </div>
-      </article>
-    `;
-  }
+        </article>
+      `;
+    }
 
-  function render() {
+    // render grid + buttons
     const grid = document.getElementById("grid");
     grid.innerHTML = PRODUCTS.map(cardHTML).join("");
+    PRODUCTS.forEach(p => renderSmartButtons(`ppbtn-${p.id}`, p));
 
-    // Mount PayPal buttons for each product (PayPal + Card)
-    PRODUCTS.forEach(p => {
-      paypal.Buttons({
-        style: {
-          shape: "pill",
-          layout: "horizontal",
-          height: 45,
-          label: "buynow"
-        },
-        // Create order on PayPal (no server needed for basic buy-now)
-        createOrder: (data, actions) => {
-          return actions.order.create({
-            purchase_units: [{
-              description: p.title,
-              amount: { value: p.price, currency_code: "USD" },
-              items: [{
-                name: p.title,
-                unit_amount: { value: p.price, currency_code: "USD" },
-                quantity: "1"
-              }]
-            }]
-          });
-        },
-        // Capture client-side (sandbox). In production, you’d capture on server.
-        onApprove: async (data, actions) => {
-          await actions.order.capture();
-
-          // Show an on-page confirmation (email delivery done by your backend/automation)
-          const slot = document.querySelector(`#ppbtn-${p.id}`).parentElement;
-          slot.innerHTML = `
-            <div class="notice success">
-              <div class="title">Payment received 💖</div>
-              <div>Please check your email for your download links.
-              If nothing arrives within a few minutes, check spam or contact us.</div>
-            </div>
-          `;
-          window.scrollTo({ top: 0, behavior: "smooth" });
-        },
-        onError: (err) => {
-          console.error(err);
-          const slot = document.querySelector(`#ppbtn-${p.id}`).parentElement;
-          slot.innerHTML = `
-            <div class="notice error">
-              <div class="title">Payment error</div>
-              <div>Please try again or use a different method.</div>
-            </div>
-          `;
-        }
-      }).render(`#ppbtn-${p.id}`);
-    });
-  }
-
-  render();
+    // contact link
+    document.getElementById("contactLink").href = `mailto:${CONTACT_EMAIL}`;
+    document.getElementById("contactLink").textContent = CONTACT_EMAIL;
   </script>
 </body>
 </html>
+
